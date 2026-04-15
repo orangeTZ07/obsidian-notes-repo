@@ -4,7 +4,7 @@
 
 
 
-#SQLi #UnionSelect #InformationSchema #CTFShow
+#InformationSchema 
 
 VULN SNAPSHOT
 

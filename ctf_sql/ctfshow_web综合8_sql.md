@@ -1,3 +1,4 @@
+#char #substr #逻辑运算符
 这道题是[[ctfshow183sql过滤与爆破]]的升级版
 进入题目，给了三个链接，点开链接后发现注入点在于url
 ![[Pasted image 20260410155723.png]]

@@ -1,0 +1,28 @@
+{
+	"nodes":[
+		{"id":"n001a1b2c3d4e5f6","type":"text","text":"XSS 相关 JS 关键词/API（安全学习版）\n说明：用于理解风险点与防护思路，不包含攻击 payload。","x":-1180,"y":-520,"width":520,"height":120},
+		{"id":"n002a1b2c3d4e5f6","type":"text","text":"基础语法与执行上下文\n- script：脚本执行入口（浏览器解析后执行）\n- function / =>：定义可执行逻辑\n- return：函数返回控制\n- this / globalThis：当前与全局上下文对象\n- new：实例化对象（可触发构造逻辑）\n- try/catch：错误处理，常用于兜底执行路径","x":-1180,"y":-350,"width":520,"height":230},
+		{"id":"n003a1b2c3d4e5f6","type":"text","text":"DOM 写入（高风险汇）\n- innerHTML：把字符串当 HTML 解析写入\n- outerHTML：替换整个节点并解析 HTML\n- insertAdjacentHTML：在指定位置插入 HTML 片段\n- document.write：文档流写入，可能直接引入不可信内容\n- Range.createContextualFragment：把字符串转为 DOM 片段\n- Element.setAttribute：设置属性，事件属性场景需谨慎","x":-600,"y":-350,"width":560,"height":280},
+		{"id":"n004a1b2c3d4e5f6","type":"text","text":"动态执行（高风险汇）\n- eval()：执行字符串代码\n- Function()：运行时创建并执行代码\n- setTimeout(string)：字符串会被当代码解析（不推荐）\n- setInterval(string)：同上，周期执行更危险\n- import()：动态加载模块，来源不可信时有风险\n- Worker()/SharedWorker()：加载脚本 URL，需校验来源","x":20,"y":-350,"width":560,"height":280},
+		{"id":"n005a1b2c3d4e5f6","type":"text","text":"URL 与导航相关\n- location / location.href：读取或跳转当前地址\n- location.assign() / replace()：页面跳转\n- URL / URLSearchParams：解析与构造 URL 参数\n- decodeURIComponent()：参数解码，输出到 DOM 前应转义\n- encodeURIComponent()：输出到 URL 时编码，减少注入风险","x":640,"y":-350,"width":520,"height":250},
+		{"id":"n006a1b2c3d4e5f6","type":"text","text":"事件与触发面\n- onload / onerror / onclick：内联事件属性执行上下文\n- addEventListener()：标准事件绑定方式\n- dispatchEvent()：手动触发事件\n- Event / CustomEvent：事件对象与自定义数据传递\n- submit / change / input：常见表单触发点\n- DOMContentLoaded：DOM 就绪时执行初始化逻辑","x":-600,"y":20,"width":560,"height":300},
+		{"id":"n007a1b2c3d4e5f6","type":"text","text":"数据与编码处理\n- JSON.parse()：反序列化用户数据，结果渲染需安全输出\n- JSON.stringify()：序列化对象\n- atob()/btoa()：Base64 编解码\n- decodeURI()/encodeURI()：整段 URI 编解码\n- String.replace()：过滤与清洗常见操作点\n- RegExp：输入校验与白名单匹配","x":20,"y":20,"width":560,"height":300},
+		{"id":"n008a1b2c3d4e5f6","type":"text","text":"存储、通信与敏感面\n- document.cookie：Cookie 读写（敏感）\n- localStorage / sessionStorage：本地持久化数据\n- postMessage()：跨窗口通信，必须校验 origin\n- fetch()：网络请求 API\n- XMLHttpRequest：传统请求接口\n- WebSocket：双向通信，消息入站需校验与转义","x":640,"y":20,"width":520,"height":300},
+		{"id":"n009a1b2c3d4e5f6","type":"text","text":"推荐安全 API / 策略\n- textContent / innerText：按纯文本写入（首选）\n- createElement() + appendChild()：结构化创建 DOM\n- createTextNode()：文本节点写入\n- DOMPurify.sanitize()：对富文本进行白名单净化\n- Trusted Types：限制危险 DOM Sink 输入类型\n- CSP（nonce/hash）：限制可执行脚本来源","x":-1180,"y":20,"width":520,"height":300},
+		{"id":"n010a1b2c3d4e5f6","type":"text","text":"快速记忆：\n1) 找到“字符串 -> HTML/代码执行”的路径（sink）\n2) 明确数据来源是否不可信（source）\n3) 通过编码、净化、上下文安全 API、CSP/Trusted Types 进行阻断","x":-600,"y":480,"width":760,"height":140}
+	],
+	"edges":[
+		{"id":"e001a1b2c3d4e5f6","fromNode":"n001a1b2c3d4e5f6","fromSide":"bottom","toNode":"n002a1b2c3d4e5f6","toSide":"top"},
+		{"id":"e002a1b2c3d4e5f6","fromNode":"n002a1b2c3d4e5f6","fromSide":"right","toNode":"n003a1b2c3d4e5f6","toSide":"left"},
+		{"id":"e003a1b2c3d4e5f6","fromNode":"n003a1b2c3d4e5f6","fromSide":"right","toNode":"n004a1b2c3d4e5f6","toSide":"left"},
+		{"id":"e004a1b2c3d4e5f6","fromNode":"n004a1b2c3d4e5f6","fromSide":"right","toNode":"n005a1b2c3d4e5f6","toSide":"left"},
+		{"id":"e005a1b2c3d4e5f6","fromNode":"n002a1b2c3d4e5f6","fromSide":"bottom","toNode":"n009a1b2c3d4e5f6","toSide":"top"},
+		{"id":"e006a1b2c3d4e5f6","fromNode":"n003a1b2c3d4e5f6","fromSide":"bottom","toNode":"n006a1b2c3d4e5f6","toSide":"top"},
+		{"id":"e007a1b2c3d4e5f6","fromNode":"n004a1b2c3d4e5f6","fromSide":"bottom","toNode":"n007a1b2c3d4e5f6","toSide":"top"},
+		{"id":"e008a1b2c3d4e5f6","fromNode":"n005a1b2c3d4e5f6","fromSide":"bottom","toNode":"n008a1b2c3d4e5f6","toSide":"top"},
+		{"id":"e009a1b2c3d4e5f6","fromNode":"n006a1b2c3d4e5f6","fromSide":"bottom","toNode":"n010a1b2c3d4e5f6","toSide":"top"},
+		{"id":"e010a1b2c3d4e5f6","fromNode":"n007a1b2c3d4e5f6","fromSide":"bottom","toNode":"n010a1b2c3d4e5f6","toSide":"top"},
+		{"id":"e011a1b2c3d4e5f6","fromNode":"n008a1b2c3d4e5f6","fromSide":"bottom","toNode":"n010a1b2c3d4e5f6","toSide":"top"},
+		{"id":"e012a1b2c3d4e5f6","fromNode":"n009a1b2c3d4e5f6","fromSide":"right","toNode":"n010a1b2c3d4e5f6","toSide":"left"}
+	]
+}

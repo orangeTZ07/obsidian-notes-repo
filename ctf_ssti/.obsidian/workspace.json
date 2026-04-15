@@ -1,62 +1,66 @@
 {
   "main": {
-    "id": "54fef3eda3096553",
+    "id": "6bf6c02dd85bd571",
     "type": "split",
     "children": [
       {
-        "id": "48faeb9c88350af3",
+        "id": "11957d77e229b81a",
         "type": "tabs",
         "children": [
           {
-            "id": "a925f35c1f6800bc",
+            "id": "49f4d2b8898aa64c",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ctfshow185sql数字过滤.md",
+                "file": "03-模板引擎与语法基础.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ctfshow185sql数字过滤"
+              "title": "03-模板引擎与语法基础"
             }
           },
           {
-            "id": "412d2390d439703d",
+            "id": "4b866b09454b7a50",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ctfshow186sql过滤大小比较.md",
+                "file": "基础知识碎片/ssti寻找祖先的方法.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ctfshow186sql过滤大小比较"
+              "title": "ssti寻找祖先的方法"
             }
           },
           {
-            "id": "8d84d6a80a15ffa5",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
-            }
-          },
-          {
-            "id": "6167deb2e970246f",
+            "id": "5430d1c64f8f4e38",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ctfshow188sql宽松比较.md",
+                "file": "基础知识碎片/ctfshow361ssti初学.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ctfshow188sql宽松比较"
+              "title": "ctfshow361ssti初学"
+            }
+          },
+          {
+            "id": "e405350ccd5bcb91",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "基础知识碎片/ctfshow361ssti初学.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ctfshow361ssti初学"
             }
           }
         ],
@@ -66,15 +70,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "02406fd1d9abd351",
+    "id": "f10225d656f34ba6",
     "type": "split",
     "children": [
       {
-        "id": "64358aa563959bc6",
+        "id": "ba33318596589350",
         "type": "tabs",
         "children": [
           {
-            "id": "1554dfb1ffdf6d5c",
+            "id": "f1cf6bc3f45e97f4",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -87,7 +91,7 @@
             }
           },
           {
-            "id": "792452e1fff0d0ff",
+            "id": "c4e82fcc38680364",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -104,7 +108,7 @@
             }
           },
           {
-            "id": "58ce4dddf0ab2e71",
+            "id": "f311694c4d99925c",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -120,19 +124,20 @@
     "width": 300
   },
   "right": {
-    "id": "058c677d1717c7a4",
+    "id": "be741ebcc5b9f542",
     "type": "split",
     "children": [
       {
-        "id": "9a85eda2d0d3901f",
+        "id": "7d0f8cdfcbfdaf78",
         "type": "tabs",
         "children": [
           {
-            "id": "c94ad4c6f2dbfdcb",
+            "id": "4b15f708df4ba6d1",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "03-模板引擎与语法基础.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -142,24 +147,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "反向链接"
+              "title": "03-模板引擎与语法基础 的反向链接列表"
             }
           },
           {
-            "id": "501a11739537759d",
+            "id": "c44f0e3ced7d4ad7",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "03-模板引擎与语法基础.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "出链"
+              "title": "03-模板引擎与语法基础 的出链列表"
             }
           },
           {
-            "id": "966ec2d98b7eff8d",
+            "id": "4180b468a6434cf0",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -174,7 +180,7 @@
             }
           },
           {
-            "id": "c64ba8e26dfc4817",
+            "id": "ff28f8207cb1d45d",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -188,22 +194,21 @@
             }
           },
           {
-            "id": "3810d8ca49c280b8",
+            "id": "fed388e09c42b124",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "ctfshow178sql空格过滤.md",
+                "file": "03-模板引擎与语法基础.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "ctfshow178sql空格过滤 的大纲"
+              "title": "03-模板引擎与语法基础 的大纲"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -218,47 +223,18 @@
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
-      "bases:新建数据库": false,
-      "obsidian-importer:Open Importer": false
+      "bases:新建数据库": false
     }
   },
-  "active": "6167deb2e970246f",
+  "active": "e405350ccd5bcb91",
   "lastOpenFiles": [
-    "Pasted image 20260413182119.png",
-    "ctfshow188sql宽松比较.md",
-    "未命名",
-    "未命名.base",
-    "ctfshow184sql过滤与爆破.md",
-    "sql的各种奇技淫巧.md",
-    "ctfshow186sql过滤大小比较.md",
-    "HTML import/ctfshow173sql修改输出结果.md",
-    "ctfshow183sql过滤与爆破.md",
-    "ctfshow_web综合8_sql.md",
-    "ctfshow185sql数字过滤.md",
-    "ctfshow178sql空格过滤.md",
-    "ctfshow_入门_web_sql由此开始.md",
-    "HTML import/ctfshow172sql基础数据库_表_字段读取.md",
-    "sql基础之直接搞懂join一家.md",
-    "sql基础having_和_where.md",
-    "Pasted image 20260412171138.png",
-    "Pasted image 20260411210252.png",
-    "Pasted image 20260411203012.png",
-    "Pasted image 20260411195946.png",
-    "Pasted image 20260410200937.png",
-    "Pasted image 20260410155723.png",
-    "Pasted image 20260409220053.png",
-    "sql基础核心节点.md",
-    "Pasted image 20260409210017.png",
-    "Pasted image 20260409204615.png",
-    "Pasted image 20260409204150.png",
-    "sql基础_group_by.md",
-    "2026-04-09.md",
-    "ctf_sql_常用技巧.canvas",
-    "ctf_信息搜集_常用技巧.canvas",
-    "HTML import/index.md",
-    "HTML import",
-    "创建链接.md",
-    "test.md",
-    "欢迎.md"
+    "基础知识碎片/ssti寻找祖先的方法.md",
+    "基础知识碎片/ssti为什么不直接执行任意代码.md",
+    "基础知识碎片/ctfshow361ssti初学.md",
+    "03-模板引擎与语法基础.md",
+    "基础知识碎片",
+    "ctfshow",
+    "02-SSTI原理解释.md",
+    "01-学习路线.md"
   ]
 }

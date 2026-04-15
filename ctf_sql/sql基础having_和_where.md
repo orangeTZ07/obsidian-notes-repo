@@ -1,6 +1,7 @@
 以下是chatgpt的回答：
 ---
 
+#过滤了where
 ## 一、没有 `GROUP BY` 时，`HAVING` 作用于哪里？
 
 ### 1. 核心结论

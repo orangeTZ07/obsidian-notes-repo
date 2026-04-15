@@ -1,3 +1,4 @@
+#IF #case #replace #hex 
 与[[ctfshow172sql基础数据库_表_字段读取]]差不多，但是加入了过滤。不过都是最基础的。  
 
 # CTFshow Web 173 SQL 注入绕过滤
