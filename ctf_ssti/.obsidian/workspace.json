@@ -62,9 +62,79 @@
               "icon": "lucide-file",
               "title": "ctfshow361ssti初学"
             }
+          },
+          {
+            "id": "a6ffe4fe1000c98d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ctfshow/ctfshow361ssti入门都这么难吗.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ctfshow361ssti入门都这么难吗"
+            }
+          },
+          {
+            "id": "e3643372bedc8d46",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ctfshow/ctfshow361ssti入门都这么难吗.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ctfshow361ssti入门都这么难吗"
+            }
+          },
+          {
+            "id": "e2d56e328fb884ad",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "基础知识碎片/ssti寻找祖先的方法.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ssti寻找祖先的方法"
+            }
+          },
+          {
+            "id": "5efd00408247597c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "基础知识碎片/subclasses在实战中一定能爆出所有类吗.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "subclasses在实战中一定能爆出所有类吗"
+            }
+          },
+          {
+            "id": "4e4a592710cebe65",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ctfshow/SSTI-Jinja2-Filter-Bypass-WP.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "SSTI-Jinja2-Filter-Bypass-WP"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -226,12 +296,30 @@
       "bases:新建数据库": false
     }
   },
-  "active": "e405350ccd5bcb91",
+  "active": "4e4a592710cebe65",
   "lastOpenFiles": [
+    "ctfshow/ctfshow366ssti过滤_.md",
+    "ctfshow/ctfshow363ssti过滤引号.md",
+    "ctfshow/SSTI-Jinja2-Filter-Bypass-WP.md",
+    "基础知识碎片/subclasses在实战中一定能爆出所有类吗.md",
     "基础知识碎片/ssti寻找祖先的方法.md",
-    "基础知识碎片/ssti为什么不直接执行任意代码.md",
-    "基础知识碎片/ctfshow361ssti初学.md",
+    "ctfshow/ctfshow361ssti入门都这么难吗.md",
+    "Pasted image 20260416182403.png",
+    "大体思路.canvas",
     "03-模板引擎与语法基础.md",
+    "基础知识碎片/python全局命名空间和内置命名空间.md",
+    "基础知识碎片/ssti对象注入.md",
+    "Pasted image 20260415143631.png",
+    "Pasted image 20260415143438.png",
+    "Pasted image 20260415142449.png",
+    "Pasted image 20260415142314.png",
+    "Pasted image 20260415142131.png",
+    "Pasted image 20260415141529.png",
+    "Pasted image 20260415135932.png",
+    "基础知识碎片/ctfshow361ssti初学.md",
+    "Pasted image 20260415134709.png",
+    "Pasted image 20260415134506.png",
+    "基础知识碎片/ssti为什么不直接执行任意代码.md",
     "基础知识碎片",
     "ctfshow",
     "02-SSTI原理解释.md",
