@@ -4,6 +4,19 @@
 - 允许了 #xml外部实体导入
 - 直接通过 `php://input` 来获取输入
 	- #php：//input 可以通过类似于读取文件的方式直接读取请求体
+
+具体代码分析：
+- `$dom = new DOMDocument();` 创建一个DOMDocument对象，准备承载xml文档
+- `$dom->loadXML($xmlfile, LIBXML_NOENT | LIBXML_DTDLOAD);`
+	- `$xmlfile` 传入xml字符串
+	- `LIBXML_NOENT` 替换XML中的实体引用
+		- 名字里的 `NO ENT` 是指 `替换实体` ，而不是禁用
+	- `LIBXML_DTDLOAD` 加载 DTD
+		- 只把DTD读入内存，进行解析和验证，不输出
+		- 配合 `LIBXML_NOENT` 把DTD(包含外部DTD)换进来
+	- 中间的 `|` 可以理解为 `或` ，用于同时开启这两个属性
+- `$creds = simplexml_import_dom($dom);` 将DOMDocument对象转换为SimpleXMLElement对象，便于用对象/数组的方式访问XML节点
+- `$ctfshow = $creds->ctfshow; echo $ctfshow;` 读取XML中的 `<ctfshow>` 标签并输出
 我们构造xml文件：
 ```
 <?xml version="1.0" encoding="UTF-8"?>

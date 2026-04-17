@@ -4,24 +4,81 @@
     "type": "split",
     "children": [
       {
-        "id": "2bb1f570fef005ef",
+        "id": "ee2eea9e687baf2e",
         "type": "tabs",
         "children": [
           {
-            "id": "30cfd032374f9bbc",
+            "id": "ae62494b94393f65",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ctfshow373xxe入门题.md",
+                "file": "ctfshow374xxe去除回显.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ctfshow373xxe入门题"
+              "title": "ctfshow374xxe去除回显"
+            }
+          },
+          {
+            "id": "2f2485bceeeeebd8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ctfshow374xxe去除回显.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ctfshow374xxe去除回显"
+            }
+          },
+          {
+            "id": "75ab50fb78848811",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ctfshow374xxe去除回显.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ctfshow374xxe去除回显"
+            }
+          },
+          {
+            "id": "a171c7dd3fc70553",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ctfshow376xxe不带xml声明.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ctfshow376xxe不带xml声明"
+            }
+          },
+          {
+            "id": "f8101c86150d9c9c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ctfshow376xxe不带xml声明.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ctfshow376xxe不带xml声明"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -78,7 +135,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 254.5
   },
   "right": {
     "id": "6ebe5c3b0857d01b",
@@ -183,9 +240,24 @@
       "bases:新建数据库": false
     }
   },
-  "active": "30cfd032374f9bbc",
+  "active": "f546f94a3fc00dab",
   "lastOpenFiles": [
-    "Pasted image 20260415154242.png",
-    "ctfshow373xxe入门题.md"
+    "什么时候对参数实体编码.md",
+    "ctfshow376xxe不带xml声明.md",
+    "ctfshow374xxe去除回显.md",
+    "ctfshow373xxe入门题.md",
+    "xml_xxe基础/为什么去掉xml声明也能正常解析.md",
+    "xml_xxe基础/OOB套装.md",
+    "xml_xxe基础/ctfshow374报错外带.md",
+    "xml_xxe基础/xml基础.md",
+    "xml_xxe基础/NOENT与DTDLOAD的必要性.md",
+    "xml_xxe基础/ctfshow374OOB_HTTP外带.md",
+    "xml_xxe基础/为什么要嵌套参数实体.md",
+    "xml_xxe基础/区分外部DTD与内联DTD.md",
+    "xml_xxe基础/ctfshow374无回显XXE总览.md",
+    "xml_xxe基础/ctfshow374本地DTD_Gadget.md",
+    "xml_xxe基础/xxe的部分原理和利用面.md",
+    "xml_xxe基础",
+    "Pasted image 20260415154242.png"
   ]
 }
