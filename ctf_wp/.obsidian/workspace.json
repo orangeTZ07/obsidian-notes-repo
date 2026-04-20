@@ -25,10 +25,14 @@
             "id": "3995c071d9dfef64",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
+              "type": "markdown",
+              "state": {
+                "file": "writeup-ctfshow-web10.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "writeup-ctfshow-web10"
             }
           }
         ],
@@ -196,6 +200,9 @@
   },
   "active": "3995c071d9dfef64",
   "lastOpenFiles": [
+    "ctfshow_PHP代码执行器过滤绕过与一句话木马思路.md",
+    "writeup-ctfshow-web10.md",
+    "TLS密钥日志解密HTTPS流量题.md",
     "Base64多层嵌套编码.md",
     "Pasted image 20260410213350.png",
     "ctfshow_web应用安全与防护核心节点.md",
