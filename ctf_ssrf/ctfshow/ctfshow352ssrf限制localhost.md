@@ -1,6 +1,6 @@
 [[ctfshow351ssrf入门]]进阶版
 本题代码：
-```
+```php
 `<?php   error_reporting(0);   highlight_file(__FILE__);   $url=$_POST['url'];   $x=parse_url($url);   if($x['scheme']==='http'||$x['scheme']==='https'){   if(!preg_match('/localhost|127.0.0/')){   $ch=curl_init($url);   curl_setopt($ch, CURLOPT_HEADER, 0);   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);   $result=curl_exec($ch);   curl_close($ch);   echo ($result);   }   else{       die('hacker');   }   }   else{       die('hacker');   }   ?>` hacker
 ```
 排版有点难看，截图看看：

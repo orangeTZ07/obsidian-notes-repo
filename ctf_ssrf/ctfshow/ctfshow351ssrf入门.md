@@ -1,5 +1,5 @@
 进入题目后看到php代码：
-```
+```php
 <?php  
 error_reporting(0);  
 highlight_file(__FILE__);  
