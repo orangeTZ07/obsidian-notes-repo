@@ -8,63 +8,38 @@
         "type": "tabs",
         "children": [
           {
-            "id": "4cf747505798cd51",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ctf_ssrf/ctfshow/ctfshow352ssrf限制localhost.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "ctfshow352ssrf限制localhost"
-            }
-          },
-          {
-            "id": "47b5b86485bb33ff",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "src/burpsuite/collaborator功能.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "collaborator功能"
-            }
-          },
-          {
-            "id": "95f8a380f5bd0765",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "src/burpsuite/collaborator功能.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "collaborator功能"
-            }
-          },
-          {
             "id": "bbc72b511cdc5392",
             "type": "leaf",
             "state": {
+              "type": "canvas",
+              "state": {
+                "file": "ctf_ 文件包含/知识图谱.canvas",
+                "viewState": {
+                  "x": 435.6471759732512,
+                  "y": -720.9841280072535,
+                  "zoom": -0.6289791335607626
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "知识图谱"
+            }
+          },
+          {
+            "id": "18fd1ed47b96df7b",
+            "type": "leaf",
+            "state": {
               "type": "markdown",
               "state": {
-                "file": "src/推荐的资源/练习类网站资源.md",
+                "file": "bash_ANSI-C引用.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "练习类网站资源"
+              "title": "bash_ANSI-C引用"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -234,10 +209,16 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "bbc72b511cdc5392",
+  "active": "18fd1ed47b96df7b",
   "lastOpenFiles": [
-    "src/推荐的资源/文档类网站资源.md",
+    "bash_ANSI-C引用.md",
+    "命令执行",
+    "ctf_ 文件包含/知识图谱.canvas",
+    "ctf_ 文件包含/日志投毒.md",
+    "ctf_ 文件包含/php_filter_chain_rce.md",
+    "src/推荐的资源/burpsuite插件推荐.md",
     "src/推荐的资源/练习类网站资源.md",
+    "src/推荐的资源/文档类网站资源.md",
     "src/burpsuite/organizer功能.md",
     "src/推荐的资源",
     "Pasted image 20260425222634.png",
@@ -252,7 +233,6 @@
     "ctf_信息搜集/DNS记录利用方法.md",
     "ctf_信息搜集/ctfshow_web13_信息搜集.md",
     "ctf_信息搜集/ctfshow_web12_信息搜集.md",
-    "ctf_ 文件包含/php_filter_chain_rce.md",
     "ctf_xss/ctfshow320xss过滤空格.md",
     "ctf_xss/ctfshow316xss入门关卡.md",
     "ctf_xss/ctfshow317xss过滤script和大小写混用.md",
