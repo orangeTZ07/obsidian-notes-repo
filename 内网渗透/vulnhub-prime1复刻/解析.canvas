@@ -46,9 +46,20 @@
 		{"id":"7062d87ecaaf0931","type":"text","text":"![[Pasted image 20260517173411.png]]","x":-1650,"y":-120,"width":244,"height":262},
 		{"id":"a547fa529f0249ad","type":"text","text":"## 本机测试结果\n```bash\nStarting Nmap 7.98 ( https://nmap.org ) at 2026-05-17 05:37 -0400\nNmap scan report for 192.168.21.1\nHost is up (0.00069s latency).\nMAC Address: 00:50:56:C0:00:08 (VMware)\nNmap scan report for 192.168.21.2\nHost is up (0.00021s latency).\nMAC Address: 00:50:56:EF:3C:A8 (VMware)\nNmap scan report for 192.168.21.128\nHost is up (0.00025s latency).\nMAC Address: 00:0C:29:EB:A5:7C (VMware)\nNmap scan report for 192.168.21.254\nHost is up (0.00035s latency).\nMAC Address: 00:50:56:E8:26:76 (VMware)\nNmap scan report for 192.168.21.129\nHost is up.\nNmap done: 256 IP addresses (5 hosts up) scanned in 4.42 seconds\n```","x":-635,"y":-1,"width":362,"height":335},
 		{"id":"5a6db77f6e1d4565","type":"file","file":"内网渗透/vulnhub-prime1复刻/复刻学长的Vulnhub-prime-1-AI指导.md","x":-239,"y":-305,"width":400,"height":400},
-		{"id":"e09bed92d9c775f1","x":-233,"y":906,"width":387,"height":194,"type":"text","text":"### 第二步：Web 目录挖掘\n\n```\n# 使用 dirsearch 扫描目录，注意添加后缀\ndirsearch -u http://192.168.85.133 -e php,txt,html\n```\n\n**关键发现**: 访问 `secret.txt`，它会提示你对某个 PHP 文件进行 Fuzz（模糊测试）。\n"},
+		{"id":"e09bed92d9c775f1","type":"text","text":"### 第二步：Web 目录挖掘\n\n```\n# 使用 dirsearch 扫描目录，注意添加后缀\ndirsearch -u http://192.168.85.133 -e php,txt,html\n```\n\n**关键发现**: 访问 `secret.txt`，它会提示你对某个 PHP 文件进行 Fuzz（模糊测试）。\n","x":-233,"y":906,"width":387,"height":194},
 		{"id":"node_pn_h","type":"text","text":"# -Pn","x":-894,"y":715,"width":119,"height":50},
-		{"id":"node_scr_h","type":"text","text":"# --script","x":-904,"y":1820,"width":139,"height":60}
+		{"id":"node_scr_h","type":"text","text":"# --script","x":-904,"y":1820,"width":139,"height":60},
+		{"id":"f0beafa5f10c636c","type":"text","text":"### 第三步：参数爆破 (Fuzzing)\n\n```\n# 对 index.php 进行参数爆破\nwfuzz -c -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --hh 136 http://192.168.85.133/index.php?FUZZ=something\n```\n\n**注意**: `--hh 136` 是为了过滤掉无效的响应。你会发现参数 `file`。","x":-239,"y":1263,"width":399,"height":247},
+		{"id":"3af3708f7dcc12ce","type":"text","text":"## 命令解析","x":255,"y":1355,"width":142,"height":63},
+		{"id":"c4a3fbb922de1d8c","type":"text","text":"`-w` 指定wordlist","x":464,"y":1360,"width":180,"height":54},
+		{"id":"05c6c9b1128229aa","type":"text","text":"`-c` 彩色输出","x":479,"y":1263,"width":151,"height":56},
+		{"id":"b3a58fed157b6233","type":"text","text":"`-hh` hide指定size的response","x":479,"y":1450,"width":180,"height":60},
+		{"id":"110c5acfac4459f9","x":440,"y":1520,"width":159,"height":72,"type":"text","text":"`FUZZ` 占位符"},
+		{"id":"0d4cdbd94b99ba19","x":430,"y":1180,"width":250,"height":60,"type":"text","text":"目的：测试可能有效的参数"},
+		{"id":"e856cc91379dc059","x":414,"y":1036,"width":310,"height":128,"type":"text","text":"使用 `ffuf` (FUZZ faster u fool ) 来进行复现\n> `ffuf` 使用高性能 `go` 进行编写"},
+		{"id":"e8ad6038c9f60302","x":800,"y":1012,"width":452,"height":176,"type":"text","text":"```bash\nffuf -c -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -fs 136 -u http://192.168.85.133/index.php?FUZZ=something\n```"},
+		{"id":"ca3dfa6123135dd0","x":947,"y":1238,"width":159,"height":51,"type":"text","text":"`-fs` filter size"},
+		{"id":"18b0c0a5a3f579ca","x":709,"y":805,"width":476,"height":203,"type":"text","text":"```bash\ngrep \"secret*\" directory-list-2.3-small.txt\nsecretary\nsecret\nsecrets\nmsecreviews\nsecretariat\nesecreviews\nesecreportpack\nsecrecy\nsecretarial\ninsidersecrets\ndigisecret\nlittlesecrets\nlittlesecrets-password\nlittlesecrets-main\nsecretariat_general\nmysecret\n```"}
 	],
 	"edges":[
 		{"id":"b81d4f8467ad63cb","fromNode":"5a6db77f6e1d4565","fromSide":"bottom","toNode":"7aea7159c254bdab","toSide":"top"},
@@ -97,6 +108,17 @@
 		{"id":"54671636a85a031d","fromNode":"node_stealth_h","fromSide":"top","toNode":"7062d87ecaaf0931","toSide":"left"},
 		{"id":"eea4de8703a86d26","fromNode":"7062d87ecaaf0931","fromSide":"right","toNode":"0a2565b4d293437d","toSide":"top"},
 		{"id":"8be1ffea013ad993","fromNode":"a8bd8152d550231e","fromSide":"top","toNode":"a547fa529f0249ad","toSide":"bottom"},
-		{"id":"2e0fa0e8e8c9f84e","fromNode":"e0dcbcd1258acef4","fromSide":"bottom","toNode":"e09bed92d9c775f1","toSide":"top"}
+		{"id":"2e0fa0e8e8c9f84e","fromNode":"e0dcbcd1258acef4","fromSide":"bottom","toNode":"e09bed92d9c775f1","toSide":"top"},
+		{"id":"23cc7f5e3dabf619","fromNode":"e09bed92d9c775f1","fromSide":"bottom","toNode":"f0beafa5f10c636c","toSide":"top"},
+		{"id":"611a4a8aab514d91","fromNode":"f0beafa5f10c636c","fromSide":"right","toNode":"3af3708f7dcc12ce","toSide":"left"},
+		{"id":"a45ab8e7a4b584b9","fromNode":"3af3708f7dcc12ce","fromSide":"right","toNode":"05c6c9b1128229aa","toSide":"left"},
+		{"id":"2d651ade000bc6e2","fromNode":"3af3708f7dcc12ce","fromSide":"right","toNode":"c4a3fbb922de1d8c","toSide":"left"},
+		{"id":"ebc3809eeb345194","fromNode":"3af3708f7dcc12ce","fromSide":"right","toNode":"b3a58fed157b6233","toSide":"left"},
+		{"id":"f4038df01d5bcfee","fromNode":"3af3708f7dcc12ce","fromSide":"right","toNode":"110c5acfac4459f9","toSide":"left"},
+		{"id":"d1f3f38224ca1b5d","fromNode":"3af3708f7dcc12ce","fromSide":"right","toNode":"0d4cdbd94b99ba19","toSide":"left"},
+		{"id":"d2d7e08a17ac9944","fromNode":"f0beafa5f10c636c","fromSide":"right","toNode":"e856cc91379dc059","toSide":"left"},
+		{"id":"c35c06e94de41668","fromNode":"e856cc91379dc059","fromSide":"right","toNode":"e8ad6038c9f60302","toSide":"left"},
+		{"id":"4773167a63c0c2e7","fromNode":"e8ad6038c9f60302","fromSide":"bottom","toNode":"ca3dfa6123135dd0","toSide":"top"},
+		{"id":"c26f343ea5466477","fromNode":"e09bed92d9c775f1","fromSide":"right","toNode":"18b0c0a5a3f579ca","toSide":"left"}
 	]
 }
