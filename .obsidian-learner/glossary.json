@@ -1,0 +1,22 @@
+{
+  "eval": {
+    "definition": "PHP 中执行字符串代码的语言结构；CTF 中常导致 PHP 代码执行。",
+    "first_seen": "CTF/Web/ctfshow-web12-php-eval-note.md"
+  },
+  "scandir": {
+    "definition": "PHP 目录列举函数，返回指定目录下一层文件和目录名数组。",
+    "first_seen": "CTF/Web/ctfshow-web12-php-eval-note.md"
+  },
+  "glob": {
+    "definition": "PHP 按通配符模式匹配文件路径的函数，常用于列举特定后缀或名称特征的文件。",
+    "first_seen": "CTF/Web/ctfshow-web12-php-eval-note.md"
+  },
+  "highlight_file": {
+    "definition": "PHP 源码高亮输出函数，常用于在代码执行场景中读取 PHP 文件源码。",
+    "first_seen": "CTF/Web/ctfshow-web12-php-eval-note.md"
+  },
+  "php://filter": {
+    "definition": "PHP stream wrapper，可通过过滤器读取资源，LFI 中常用于 base64 读取 PHP 源码。",
+    "first_seen": "CTF/Web/ctfshow-web12-php-eval-note.md"
+  }
+}

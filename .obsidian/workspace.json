@@ -28,17 +28,14 @@
             "id": "18fd1ed47b96df7b",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "内网渗透/vulnhub-prime1复刻/解析.canvas",
-                "viewState": {
-                  "x": 50.48722723013566,
-                  "y": 2908.9126339616587,
-                  "zoom": -0.05674569764871362
-                }
+                "file": "CTF/Web/ctfshow-web12-php-eval-note.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "解析"
+              "icon": "lucide-file",
+              "title": "ctfshow-web12-php-eval-note"
             }
           }
         ],
@@ -215,8 +212,15 @@
   "active": "18fd1ed47b96df7b",
   "lastOpenFiles": [
     "内网渗透/vulnhub-prime1复刻/复刻学长的Vulnhub-prime-1-AI指导.md",
-    "内网渗透/vulnhub-prime1复刻/解析.canvas",
+    "CTF/Web/ctfshow-web12-php-eval-note.md",
+    "CTF/Web",
+    "CTF",
+    "ctf_wp/未命名.md",
+    "ctf_wp/PHP_SESSION原理与CTF技巧.md",
+    "ctf_wp/writeup-ctfshow-web10.md",
+    "ctf_wp/ctfshow_web应用安全与防护核心节点.md",
     "内网渗透/vulnhub-prime1复刻/保姆级讲解攻击vulnhub的prime1.md",
+    "内网渗透/vulnhub-prime1复刻/解析.canvas",
     "命令执行/bash_ANSI-C引用.md",
     "内网渗透/vulnhub-prime1复刻/attachments/Pasted image 20260517173411.png",
     "内网渗透/vulnhub-prime1复刻/Prime1-Attack-Flow.canvas",
@@ -248,7 +252,6 @@
     "src/burpsuite/collaborator功能.md",
     "ctf_ssrf/ctfshow/ctfshow352ssrf限制localhost.md",
     "src/burpsuite",
-    "src",
     "ctf_ssrf/ctfshow/ctfshow351ssrf入门.md",
     "ctf_信息搜集/DNS记录利用方法.md",
     "ctf_信息搜集/ctfshow_web13_信息搜集.md",

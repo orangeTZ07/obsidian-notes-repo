@@ -1,0 +1,7 @@
+{
+  "top_heading_level": 2,
+  "step_verbosity": "detailed",
+  "code_block_lang_required": true,
+  "tag_location": "frontmatter",
+  "use_callouts": true
+}
