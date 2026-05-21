@@ -35,4 +35,4 @@
 ## 实操建议
 - 先用最短 payload 验证“目标端口可交互”。
 - 再上复杂 payload，分步骤观察变化。
-- 模板见 [[payloads/gopher模板]]。
+- 模板见 [[gopher模板]]。
