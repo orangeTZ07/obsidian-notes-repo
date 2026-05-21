@@ -18,5 +18,17 @@
   "php://filter": {
     "definition": "PHP stream wrapper，可通过过滤器读取资源，LFI 中常用于 base64 读取 PHP 源码。",
     "first_seen": "CTF/Web/ctfshow-web12-php-eval-note.md"
+  },
+  "PHP eval": {
+    "definition": "PHP 中将字符串作为 PHP 代码执行的危险函数，CTF 中常结合过滤绕过考察代码执行。",
+    "first_seen": "CTF/Web/ctf_命令执行/ctfshow-红包题-php-eval-glob-绕过.md"
+  },
+  "shell glob": {
+    "definition": "Shell 通配符展开机制，如 ? 匹配单个字符，可在过滤字母时绕过显式命令名或路径名。",
+    "first_seen": "CTF/Web/ctf_命令执行/ctfshow-红包题-php-eval-glob-绕过.md"
+  },
+  "PHP 反引号执行": {
+    "definition": "PHP 中反引号包裹的内容会作为 shell 命令执行并返回输出，类似 shell_exec。",
+    "first_seen": "CTF/Web/ctf_命令执行/ctfshow-红包题-php-eval-glob-绕过.md"
   }
 }
