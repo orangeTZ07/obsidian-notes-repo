@@ -1,0 +1,35 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# 🌲 AVL树失衡调整：RL型详解\n期末冲刺必考考点！","x":-200,"y":-400,"width":400,"height":100,"color":"1"},
+		{"id":"concept_bf","type":"text","text":"### ⚖️ 核心工具：平衡因子 (BF)\n\n**BF = 左子树高度 - 右子树高度**\n\n- 平衡状态：`1, 0, -1`\n- 失衡状态：`2` 或 `-2`","x":-600,"y":-200,"width":300,"height":150,"color":"2"},
+		{"id":"concept_a","type":"text","text":"### 🎯 破案起点：最低失衡点 A\n\n从新插入的结点往上找，遇到的**第一个** BF 变成 `2` 或 `-2` 的结点。\n\n> 擒贼先擒王，只管 A 及其子孙，不用管 A 的长辈。","x":300,"y":-200,"width":300,"height":160,"color":"3"},
+		{"id":"step_1","type":"text","text":"### 🕵️‍♂️ 推理第1步：找第一层位置\n\n已知：A 是最低失衡点，A 的**右孩子 R 的 BF 为 1**。\n\n**推理：** 既然右孩子内部变了，说明新砖块垫在了右边，把右边撑高了。\n-> A 的 BF 必为 `-2`。\n-> 确定第一个字母：**R (Right)**","x":-150,"y":0,"width":350,"height":200,"color":"4"},
+		{"id":"step_2","type":"text","text":"### 🕵️‍♂️ 推理第2步：找第二层位置\n\n盯住右孩子 **R**。\n\n**推理：** R 的 BF 为 1。\n根据公式 `BF = 左 - 右 = 1`，说明 R 的左边比右边高 1 层。\n-> 新砖块垫在了 R 的左边。\n-> 确定第二个字母：**L (Left)**","x":-150,"y":250,"width":350,"height":200,"color":"4"},
+		{"id":"conclusion","type":"text","text":"### 💥 结论与解药：RL型\n\n**病因：** 折线型失衡 `>`\n\n**解药（双旋）：**\n1. **先对 R 右旋**：提拔孙子 L，把折线掰成直线 `\\`\n2. **再对 A 左旋**：提拔 L 为新老大，A 退位为左小弟","x":-150,"y":500,"width":350,"height":180,"color":"5"},
+		{"id":"vis_before","type":"text","text":"```text\n【失衡时的折线图】\n\n      A (BF=-2)\n        \\\n         R (BF=1)\n        /\n       L\n      /\n    (新结点)\n```","x":-600,"y":150,"width":300,"height":220},
+		{"id":"vis_after","type":"text","text":"```text\n【旋转修复后的等腰图】\n\n        L\n       /  \\\n     A      R\n\n(原本 L 的左右子树，会完美过继给 A的右边 和 R的左边)\n```","x":300,"y":450,"width":320,"height":220,"color":"6"}
+	],
+	"edges":[
+		{"id":"e_title_1","fromNode":"title","fromSide":"bottom","toNode":"step_1","toSide":"top"},
+		{"id":"e_title_bf","fromNode":"title","fromSide":"left","toNode":"concept_bf","toSide":"top"},
+		{"id":"e_title_a","fromNode":"title","fromSide":"right","toNode":"concept_a","toSide":"top"},
+		{"id":"e_step1_step2","fromNode":"step_1","fromSide":"bottom","toNode":"step_2","toSide":"top"},
+		{"id":"e_step2_conclusion","fromNode":"step_2","fromSide":"bottom","toNode":"conclusion","toSide":"top"},
+		{
+			"id":"e_vis1",
+			"fromNode":"step_1",
+			"fromSide":"left",
+			"toNode":"vis_before",
+			"toSide":"right",
+			"styleAttributes":{"path":"dashed"}
+		},
+		{
+			"id":"e_vis2",
+			"fromNode":"conclusion",
+			"fromSide":"right",
+			"toNode":"vis_after",
+			"toSide":"left",
+			"styleAttributes":{"path":"dashed"}
+		}
+	]
+}
