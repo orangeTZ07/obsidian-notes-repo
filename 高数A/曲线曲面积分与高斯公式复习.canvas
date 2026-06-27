@@ -1,0 +1,44 @@
+{
+	"nodes":[
+		{
+			"id":"node1",
+			"type":"text",
+			"text":"# 🎓 第一型曲面积分的对称性\n\n如果在积分曲面 $\\Sigma$ 上有对称性，且被积函数具有奇偶性：\n\n- 如果 $\\Sigma$ 关于 $x=0$ 对称，且 $f(-x,y,z) = -f(x,y,z)$（奇函数），则 $\\iint_{\\Sigma} f(x,y,z) dS = 0$。\n- 如果 $\\Sigma$ 关于 $x=0$ 对称，且 $f(-x,y,z) = f(x,y,z)$（偶函数），则积分等于一半区域的 $2$ 倍。\n\n**轮换对称性**：\n如果曲面方程中 $x,y,z$ 互换位置方程不变（如球面），则 $\\iint_{\\Sigma} x^2 dS = \\iint_{\\Sigma} y^2 dS = \\iint_{\\Sigma} z^2 dS$。",
+			"x":-400,
+			"y":-200,
+			"width":350,
+			"height":280
+		},
+		{
+			"id":"node2",
+			"type":"text",
+			"text":"# 🎓 全微分求原函数\n\n判断 $Pdx + Qdy$ 是否为全微分的充要条件：\n$\\frac{\\partial P}{\\partial y} = \\frac{\\partial Q}{\\partial x}$\n\n**求法（偏积分法）**：\n1. 对 $P$ 关于 $x$ 积分，加上常数函数 $C(y)$：$u = \\int P dx + C(y)$\n2. 对 $u$ 关于 $y$ 求导，并令其等于 $Q$，解出 $C'(y)$。\n3. 积分得到 $C(y)$，代回得到最终原函数。",
+			"x":0,
+			"y":-200,
+			"width":350,
+			"height":250
+		},
+		{
+			"id":"node3",
+			"type":"text",
+			"text":"# 🎓 高斯公式 (Gauss's Theorem)\n\n$$\\oiint_{\\Sigma} P dy dz + Q dz dx + R dx dy = \\iiint_{V} \\left( \\frac{\\partial P}{\\partial x} + \\frac{\\partial Q}{\\partial y} + \\frac{\\partial R}{\\partial z} \\right) dV$$\n\n**核心思想**：将封闭曲面上的面积分转化为所围成立体区域内的体积分。大大简化了繁琐的曲面积分运算！\n注意：曲面的法向量必须指向**外侧**。",
+			"x":-200,
+			"y":150,
+			"width":400,
+			"height":220
+		},
+		{
+			"id":"node4",
+			"type":"text",
+			"text":"# 🎓 格林公式与曲线积分\n\n$$\\oint_L P dx + Q dy = \\iint_D \\left( \\frac{\\partial Q}{\\partial x} - \\frac{\\partial P}{\\partial y} \\right) dx dy$$\n\n如果 $\\frac{\\partial P}{\\partial y} = \\frac{\\partial Q}{\\partial x}$，但是在原点处**分母为0（奇点）**，则不能直接用格林公式得出积分为0！\n**技巧**：遇到奇点在积分曲线内部的情况，可以用参数方程直接暴力算，或者挖洞法把奇点挖掉！",
+			"x":250,
+			"y":100,
+			"width":380,
+			"height":240
+		}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"node1","fromSide":"right","toNode":"node2","toSide":"left"},
+		{"id":"e2","fromNode":"node1","fromSide":"bottom","toNode":"node3","toSide":"left"}
+	]
+}

@@ -1,0 +1,47 @@
+{
+	"nodes": [
+		{
+			"id": "eeb00bb01eecc3bd",
+			"x": -250,
+			"y": -200,
+			"width": 500,
+			"height": 150,
+			"type": "text",
+			"text": "# 🌟 高斯公式 (Gauss Divergence Theorem)\n\n**核心哲学**：将难以计算的“**封闭曲面积分**”（面）转化为通常更容易计算的“**三重积分**”（体）。\n\n公式：$\\oiint_{\\Sigma} P dydz + Q dzdx + R dxdy = \\iiint_{\\Omega} (\\frac{\\partial P}{\\partial x} + \\frac{\\partial Q}{\\partial y} + \\frac{\\partial R}{\\partial z}) dv$"
+		},
+		{
+			"id": "a4d32e9a5c88b6f3",
+			"x": -250,
+			"y": 0,
+			"width": 500,
+			"height": 180,
+			"type": "text",
+			"text": "## ⚠️ 终极避坑指南：必须是封闭曲面！\n\n**陷阱**：考研和期末题最喜欢给一个**不封闭**的曲面（例如：只给半球面、抛物面的下半部分，没有盖子）。\n\n**破解之法（补面法）**：\n1. 人为地补上一个最简单的面 $\\Sigma_1$（通常是平面上的一个圆盘，比如 $z=0$），把空间“盖住”。\n2. 计算 $\\oiint_{\\Sigma + \\Sigma_1} = \\iiint_{\\Omega}$（用高斯公式计算总和）\n3. 算出那个“补上去的盖子”的积分 $\\iint_{\\Sigma_1}$。\n4. 结果 = 总体积积分 - 盖子的积分。"
+		},
+		{
+			"id": "c1f1e9f1a2a11b21",
+			"x": -250,
+			"y": 230,
+			"width": 500,
+			"height": 120,
+			"type": "text",
+			"text": "## 🧭 细分细节：法向量方向\n\n*   高斯公式中，封闭曲面 $\\Sigma$ 必须取**外侧**！\n*   如果你补的面是底面 $z=0$，那么构成封闭曲面的外侧，它的法向量必须指向**下**（也就是 $(0,0,-1)$）。\n*   此时 $dxdy$ 的投影带有**负号**！"
+		}
+	],
+	"edges": [
+		{
+			"id": "670c3c861e687b12",
+			"fromNode": "eeb00bb01eecc3bd",
+			"fromSide": "bottom",
+			"toNode": "a4d32e9a5c88b6f3",
+			"toSide": "top"
+		},
+		{
+			"id": "870c3c861e687b13",
+			"fromNode": "a4d32e9a5c88b6f3",
+			"fromSide": "bottom",
+			"toNode": "c1f1e9f1a2a11b21",
+			"toSide": "top"
+		}
+	]
+}

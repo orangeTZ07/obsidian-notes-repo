@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# ⚔️ AOV网 vs AOE网 (期末概念辨析)\n\n名字长得像，用途大不同！",
+      "x": -100, "y": -300, "width": 400, "height": 100,
+      "color": "6"
+    },
+    {
+      "id": "aov",
+      "type": "text",
+      "text": "### 🅰️ AOV 网 (Activity On Vertex)\n\n- **全拼**：Activity On Vertex Network\n- **活动在哪里**：在**顶点**上！\n- **边的含义**：表示先决条件（纯粹的先后顺序）。\n- **核心灵魂**：**“顺序”**。\n- **核心算法**：**拓扑排序**。\n- **比喻**：排课表。不关心每门课上多久，只关心先上啥后上啥。",
+      "x": -350, "y": -150, "width": 300, "height": 220,
+      "color": "4"
+    },
+    {
+      "id": "aoe",
+      "type": "text",
+      "text": "### 🅱️ AOE 网 (Activity On Edge)\n\n- **全拼**：Activity On Edge Network\n- **活动在哪里**：在**边**上！(顶点退化成了“事件/状态”)\n- **边的含义**：除了表示顺序，还有**权值**（通常代表时间/花费）。\n- **核心灵魂**：**“时间”**。\n- **核心算法**：**关键路径 (Critical Path)**。\n- **比喻**：包工头盖房子。不仅要知道先打地基后砌墙，还要算出一共要多少天，哪个环节绝对不能拖延。",
+      "x": 50, "y": -150, "width": 320, "height": 240,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {"id": "e1", "fromNode": "title", "fromSide": "bottom", "toNode": "aov", "toSide": "top", "color": "4"},
+    {"id": "e2", "fromNode": "title", "fromSide": "bottom", "toNode": "aoe", "toSide": "top", "color": "5"}
+  ]
+}

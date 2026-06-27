@@ -1,0 +1,54 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# 🌟 AOE网与关键路径 - 核心复习卡片\n\n期末必考大题，掌握四步走口诀！",
+      "x": -200, "y": -350, "width": 400, "height": 100,
+      "color": "6"
+    },
+    {
+      "id": "concept",
+      "type": "text",
+      "text": "### 📌 什么是AOE网？\n\n- **顶点 (Vertex)**：代表**事件**（一种静止的状态），比如“菜切好了”。\n- **边 (Edge)**：代表**活动**（一个动作过程），比如“切菜”这个动作。\n- **权值**：代表这个活动的**耗时**。",
+      "x": -450, "y": -180, "width": 320, "height": 180,
+      "color": "4"
+    },
+    {
+      "id": "analogy",
+      "type": "text",
+      "text": "### 🍳 形象的比喻：做大餐\n\n假设你要做顿大餐，最后要“开饭”：\n前提是必须**“菜洗好”**且**“饭煮熟”**。\n如果煮饭要30分，洗菜只要10分。\n你必须等最慢的（煮饭）完成，才能进入“开饭”状态！\n\n👉 这就是为什么求“最早发生时间”要**取最大值**！",
+      "x": 50, "y": -180, "width": 320, "height": 220,
+      "color": "3"
+    },
+    {
+      "id": "ve_vl",
+      "type": "text",
+      "text": "### ⏱️ 顶点的两个时间 (针对状态)\n\n**1. ve (最早发生时间)**\n- **方向**：从前往后推 (顺藤摸瓜)\n- **口诀**：**求早取大！** (必须等所有前置任务做完)\n- $$ve(j) = \\max \\{ ve(i) + W \\}$$\n\n**2. vl (最迟发生时间)**\n- **方向**：从后往前推 (顺水推舟)\n- **口诀**：**求迟取小！** (不能耽误后面最紧迫的任务)\n- $$vl(i) = \\min \\{ vl(j) - W \\}$$",
+      "x": -450, "y": 80, "width": 380, "height": 300,
+      "color": "2"
+    },
+    {
+      "id": "e_l",
+      "type": "text",
+      "text": "### 🏃‍♂️ 活动的两个时间 (针对边)\n\n假设有一条边从 $i$ 指向 $j$，耗时为 $W$：\n\n**1. e (活动最早开始时间)**\n- 不能比出发点的状态早。\n- **$e = ve(i)$**\n\n**2. l (活动最晚开始时间)**\n- 不能比到达点的最晚底线迟（得预留出自己的耗时）。\n- **$l = vl(j) - W$**",
+      "x": 20, "y": 80, "width": 350, "height": 280,
+      "color": "5"
+    },
+    {
+      "id": "critical_path",
+      "type": "text",
+      "text": "### 🔥 关键路径是什么？\n\n- **时间余量 d = l - e**\n- 最晚开始减去最早开始，代表这个任务能“摸鱼”多久。\n- 当 **d = 0** 时，说明一秒钟都不能拖！\n- 这条边就是**关键活动**。\n- 把关键活动连起来，就是项目的**关键路径**！",
+      "x": -200, "y": 420, "width": 350, "height": 220,
+      "color": "1"
+    }
+  ],
+  "edges": [
+    {"id": "edge1", "fromNode": "title", "fromSide": "bottom", "toNode": "concept", "toSide": "top", "color": "6"},
+    {"id": "edge2", "fromNode": "title", "fromSide": "bottom", "toNode": "analogy", "toSide": "top", "color": "6"},
+    {"id": "edge3", "fromNode": "concept", "fromSide": "bottom", "toNode": "ve_vl", "toSide": "top", "color": "4"},
+    {"id": "edge4", "fromNode": "ve_vl", "fromSide": "right", "toNode": "e_l", "toSide": "left", "color": "2"},
+    {"id": "edge5", "fromNode": "ve_vl", "fromSide": "bottom", "toNode": "critical_path", "toSide": "top", "color": "2"},
+    {"id": "edge6", "fromNode": "e_l", "fromSide": "bottom", "toNode": "critical_path", "toSide": "top", "color": "5"}
+  ]
+}

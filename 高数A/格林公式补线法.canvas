@@ -1,0 +1,87 @@
+{
+  "nodes": [
+    {
+      "id": "intro",
+      "type": "text",
+      "text": "# 🌟 格林公式：补线法（曲线积分）\n当要求解一段**不闭合**的曲线积分时，如果我们发现 $\\frac{\\partial Q}{\\partial x} - \\frac{\\partial P}{\\partial y}$ 很容易计算，我们往往会想到**补线**来构造闭合回路，从而使用格林公式。",
+      "x": -300,
+      "y": -200,
+      "width": 500,
+      "height": 180
+    },
+    {
+      "id": "step1",
+      "type": "text",
+      "text": "### 🧱 第一步：补一条“好算”的线\n通常选择沿着坐标轴的直线段。比如原路径是 $A \\to B \\to O$，我们可以补上从 $O \\to A$ 的直线段 $L_{补}$。\n- 坐标轴上的线 $dx$ 或 $dy$ 往往为 0，极大简化计算！",
+      "x": 300,
+      "y": -200,
+      "width": 400,
+      "height": 180
+    },
+    {
+      "id": "step2",
+      "type": "text",
+      "text": "### 🧭 第二步：判定回路方向（极易错！）\n判断闭合回路 $L_{原} \\cup L_{补}$ 的方向：\n- **逆时针（正向）**：人在曲线上走，积分区域在**左手边**。\n- **顺时针（负向）**：人在曲线上走，积分区域在**右手边**。",
+      "x": -300,
+      "y": 50,
+      "width": 500,
+      "height": 180
+    },
+    {
+      "id": "step3",
+      "type": "text",
+      "text": "### 🧮 第三步：列出格林公式\n如果回路是**逆时针（正向）**：\n$$ \\int_{L_{原}} + \\int_{L_{补}} = \\iint_D \\left(\\frac{\\partial Q}{\\partial x} - \\frac{\\partial P}{\\partial y}\\right) dxdy $$\n所以：\n$$ \\int_{L_{原}} = \\iint_D - \\int_{L_{补}} $$",
+      "x": 300,
+      "y": 50,
+      "width": 400,
+      "height": 220
+    },
+    {
+      "id": "warning",
+      "type": "text",
+      "text": "### ⚠️ 避坑指南：二重积分的代数化简\n在计算 $\\iint_D$ 时，**一定一定要小心多项式的展开**！\n例如：$(2-y)^2 - y^2$\n❌ 错误做法：以为等于 $2(1-y^2)$\n✅ 正确做法：老老实实展开 $\\Rightarrow 4 - 4y + y^2 - y^2 = 4 - 4y = 4(1-y)$。多写一步，少丢十分！",
+      "x": 0,
+      "y": 350,
+      "width": 500,
+      "height": 200,
+      "color": "3"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "fromNode": "intro",
+      "fromSide": "right",
+      "toNode": "step1",
+      "toSide": "left"
+    },
+    {
+      "id": "e2",
+      "fromNode": "step1",
+      "fromSide": "bottom",
+      "toNode": "step3",
+      "toSide": "top"
+    },
+    {
+      "id": "e3",
+      "fromNode": "intro",
+      "fromSide": "bottom",
+      "toNode": "step2",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "fromNode": "step2",
+      "fromSide": "right",
+      "toNode": "step3",
+      "toSide": "left"
+    },
+    {
+      "id": "e5",
+      "fromNode": "step3",
+      "fromSide": "bottom",
+      "toNode": "warning",
+      "toSide": "right"
+    }
+  ]
+}

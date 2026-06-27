@@ -1,0 +1,46 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# 🌟 第一类曲面积分 - 面积元素 $dS$ 的奥秘\n\n“为啥要把 $dxdy$ 乘上一长串带根号的东西？”",
+      "x": -200, "y": -350, "width": 450, "height": 100,
+      "color": "6"
+    },
+    {
+      "id": "question",
+      "type": "text",
+      "text": "### 🤔 我们的烦恼\n\n曲面 $\\Sigma$ 是弯曲的，没办法直接量。\n但是它在地面（$xoy$ 平面）上的影子（投影区域 $D_{xy}$）是平的，我们可以切成无数个小方块 $dxdy$。\n\n**问题来了：** 地面上的影子小方块 $dxdy$，和空中曲面上真实的倾斜小碎片 $dS$，面积一样大吗？",
+      "x": -450, "y": -180, "width": 350, "height": 220,
+      "color": "4"
+    },
+    {
+      "id": "analogy",
+      "type": "text",
+      "text": "### 🏠 形象比喻：斜屋顶的瓦片\n\n想象一栋房子，阳光从正上方垂直照下来。\n- 屋顶的一块瓦片（真实面积 $dS$）\n- 瓦片在地面上的阴影（投影面积 $dxdy$）\n\n显然，瓦片是倾斜的，**倾斜的瓦片一定比它的垂直阴影面积要大！**\n而且屋顶倾斜得越厉害，瓦片比阴影大得就越多。",
+      "x": 50, "y": -180, "width": 350, "height": 220,
+      "color": "3"
+    },
+    {
+      "id": "formula",
+      "type": "text",
+      "text": "### 📐 数学怎么描述这种“倾斜放大”？\n\n数学家发现，放大倍数只和**曲面的坡度（偏导数）**有关。\n假设曲面方程是 $z = f(x,y)$：\n- x方向的坡度：$z_x$（对x求偏导）\n- y方向的坡度：$z_y$（对y求偏导）\n\n**核心公式（放大系数）：**\n$$ dS = \\sqrt{1 + (z_x)^2 + (z_y)^2} \\cdot dxdy $$\n\n前面的那个大根号，就是**“坡度放大器”**！",
+      "x": -200, "y": 80, "width": 450, "height": 240,
+      "color": "1"
+    },
+    {
+      "id": "action",
+      "type": "text",
+      "text": "### 🛠️ 解题三步曲\n\n1. **找投影**：看曲面 $\\Sigma$ 投射到哪个面（比如 $xoy$），找出投影区域 $D_{xy}$。\n2. **算偏导**：根据曲面方程算 $z_x$ 和 $z_y$。\n3. **换算dS**：把积分里的 $dS$ 替换成 $\\sqrt{1+z_x^2+z_y^2} dxdy$，第一类曲面积分就乖乖变成了普通的**二重积分**！",
+      "x": -200, "y": 360, "width": 450, "height": 200,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {"id": "edge1", "fromNode": "title", "fromSide": "bottom", "toNode": "question", "toSide": "top", "color": "6"},
+    {"id": "edge2", "fromNode": "title", "fromSide": "bottom", "toNode": "analogy", "toSide": "top", "color": "6"},
+    {"id": "edge3", "fromNode": "question", "fromSide": "bottom", "toNode": "formula", "toSide": "top", "color": "4"},
+    {"id": "edge4", "fromNode": "analogy", "fromSide": "bottom", "toNode": "formula", "toSide": "top", "color": "3"},
+    {"id": "edge5", "fromNode": "formula", "fromSide": "bottom", "toNode": "action", "toSide": "top", "color": "1"}
+  ]
+}

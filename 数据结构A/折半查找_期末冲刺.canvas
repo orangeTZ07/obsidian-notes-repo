@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"1","type":"text","text":"# 折半查找 (Binary Search)\n\n**核心思想**：每次将查找区间缩小一半，直接丢弃另一半。\n像猜数字游戏（1-100），先猜50！","x":-400,"y":-200,"width":320,"height":160},
+		{"id":"2","type":"text","text":"## ⚠️ 使用前提\n\n1. **必须是有序的**（通常从小到大）\n2. **必须是顺序存储**（数组）。\n*为什么？因为需要通过下标 `(low+high)/2` 随机访问找中点！链表做不到。*","x":-400,"y":20,"width":320,"height":180},
+		{"id":"3","type":"text","text":"## 💻 核心公式\n\n计算中点（严蔚敏版默认**向下取整**）：\n$$mid = \\lfloor \\frac{low + high}{2} \\rfloor$$\n\n- 若 `key < A[mid]`，找左半边：`high = mid - 1`\n- 若 `key > A[mid]`，找右半边：`low = mid + 1`\n- 循环条件：`low <= high`","x":0,"y":-200,"width":350,"height":260},
+		{"id":"4","type":"text","text":"## 🌳 判定树 (核心考点)\n\n判定树是一棵**二叉排序树**（BST）。\n- 成功节点数 = $n$\n- 失败节点数 = $n + 1$ (对应的外部空节点)\n- 树高 $h = \\lceil \\log_2(n+1) \\rceil$\n\n**ASL计算**：\n$ASL_{succ} = \\frac{1}{n} \\sum (层数 \\times 该层节点数)$","x":420,"y":-150,"width":360,"height":280},
+		{"id":"5","type":"text","text":"## 🎯 必考题型\n\n1. **画判定树，算 ASL**\n   - 按照求mid公式一步步推。\n2. **判断比较序列是否合法**\n   - 画出给定的比较路径。\n   - **绝招**：如果路径中出现“先向右走（说明目标比当前大），接着遇到的节点却比之前的节点小”，则不合法！","x":0,"y":120,"width":350,"height":260}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"1","fromSide":"bottom","toNode":"2","toSide":"top"},
+		{"id":"e2","fromNode":"1","fromSide":"right","toNode":"3","toSide":"left"},
+		{"id":"e3","fromNode":"3","fromSide":"right","toNode":"4","toSide":"left"},
+		{"id":"e4","fromNode":"3","fromSide":"bottom","toNode":"5","toSide":"top"}
+	]
+}

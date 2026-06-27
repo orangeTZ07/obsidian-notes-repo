@@ -1,0 +1,63 @@
+{
+	"nodes": [
+		{
+			"id": "node-1",
+			"type": "text",
+			"text": "# 幂级数展开的核心思想\n\n将一个复杂的函数，用无穷多个简单的多项式（$1, x, x^2, x^3...$）累加来逼近。\n\n**关键公式：**\n$$f(x) = \\sum_{n=0}^{\\infty} \\frac{f^{(n)}(x_0)}{n!} (x-x_0)^n$$",
+			"x": -300,
+			"y": -200,
+			"width": 450,
+			"height": 220
+		},
+		{
+			"id": "node-2",
+			"type": "text",
+			"text": "## 常见函数的展开式（必须背诵！）\n\n这是我们进行“间接展开法”的弹药库！\n\n1. $e^x = \\sum_{n=0}^\\infty \\frac{x^n}{n!} \\quad (x \\in \\mathbb{R})$\n2. $\\sin x = \\sum_{n=0}^\\infty (-1)^n \\frac{x^{2n+1}}{(2n+1)!} \\quad (x \\in \\mathbb{R})$\n3. $\\cos x = \\sum_{n=0}^\\infty (-1)^n \\frac{x^{2n}}{(2n)!} \\quad (x \\in \\mathbb{R})$\n4. $\\frac{1}{1-x} = \\sum_{n=0}^\\infty x^n \\quad (x \\in (-1, 1))$\n5. $\\ln(1+x) = \\sum_{n=1}^\\infty (-1)^{n-1} \\frac{x^n}{n} \\quad (x \\in (-1, 1])$",
+			"x": 250,
+			"y": -280,
+			"width": 500,
+			"height": 380
+		},
+        {
+			"id": "node-3",
+			"type": "text",
+			"text": "## 常用技巧：代换法（换元）\n\n**期末必考核心技巧！**\n如果求 $e^{-x^2}$ 的展开，**千万不要去求导算泰勒公式！** 会算到自闭的！\n\n做法：把 $-x^2$ 看作一个整体 $t$，直接代入 $e^t$ 的展开式即可。这种把原函数看成复合函数，利用已知公式进行代换的方法叫**间接展开法**。",
+			"x": 250,
+			"y": 150,
+			"width": 500,
+			"height": 220
+		},
+        {
+			"id": "node-4",
+			"type": "text",
+			"text": "## 常用技巧：四则运算与分解\n\n面对复杂函数，先化简，再展开！\n\n- **三角降幂**：如果遇到 $\\cos^2 x$，先用降幂公式变成 $\\frac{1+\\cos 2x}{2}$。\n- **对数拆分**：遇到 $\\ln(1+3x+2x^2)$，先因式分解为 $\\ln((1+x)(1+2x)) = \\ln(1+x) + \\ln(1+2x)$，再分别展开后相加。\n- **分式化简**：遇到分式 $\\frac{x}{9+x^2}$，提公因式凑成 $\\frac{1}{1-q}$ 的形式使用等比数列求和逆向展开。",
+			"x": -300,
+			"y": 100,
+			"width": 450,
+			"height": 300
+		}
+	],
+	"edges": [
+		{
+			"id": "edge-1",
+			"fromNode": "node-1",
+			"fromSide": "right",
+			"toNode": "node-2",
+			"toSide": "left"
+		},
+        {
+			"id": "edge-2",
+			"fromNode": "node-2",
+			"fromSide": "bottom",
+			"toNode": "node-3",
+			"toSide": "top"
+		},
+        {
+			"id": "edge-3",
+			"fromNode": "node-1",
+			"fromSide": "bottom",
+			"toNode": "node-4",
+			"toSide": "top"
+		}
+	]
+}

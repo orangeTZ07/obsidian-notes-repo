@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"init_state","type":"text","text":"### 初始状态（森林里全是单身汉）\n\n当前的候选人：\n**[2, 3, 6, 7, 10, 19, 21, 32]**\n\n哈夫曼唯一铁律：**每次只挑全场最小的两个！**","x":-600,"y":-300,"width":300,"height":180},
+		{"id":"step1","type":"text","text":"### 第一轮\n\n全场最小的是 2 和 3。\n它们合并变成 **5**。\n\n现在的候选人：\n**[5, 6, 7, 10, 19, 21, 32]**","x":-250,"y":-300,"width":250,"height":180},
+		{"id":"step2","type":"text","text":"### 第二轮\n\n全场最小的是 5 和 6。\n它们合并变成 **11**。\n\n现在的候选人：\n**[7, 10, 11, 19, 21, 32]**","x":50,"y":-300,"width":250,"height":180},
+		{"id":"step3_critical","type":"text","text":"### 第三轮（易错点 ⚠️）\n\n现在的候选人是：[7, 10, 11, 19, 21, 32]\n大家习惯性以为 11 刚生出来，就要接着用 11 去和 7 合并。\n**错！**\n规则是找全场最小的两个！\n在这个池子里，**7 和 10 都比 11 小！**\n\n所以，11 必须靠边站。轮到 7 和 10 合并，变成 **17**。\n\n现在的候选人：\n**[11, 17, 19, 21, 32]**","x":350,"y":-300,"width":350,"height":280},
+		{"id":"step4","type":"text","text":"### 第四轮\n\n现在的候选人：[11, 17, 19, 21, 32]\n全场最小的终于轮到 **11 和 17** 了！\n它们合并变成 **28**。\n\n**结论：11 的兄弟是 17，而不是 17 的孩子（7和10）。**","x":750,"y":-300,"width":300,"height":200}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"init_state","fromSide":"right","toNode":"step1","toSide":"left"},
+		{"id":"e2","fromNode":"step1","fromSide":"right","toNode":"step2","toSide":"left"},
+		{"id":"e3","fromNode":"step2","fromSide":"right","toNode":"step3_critical","toSide":"left"},
+		{"id":"e4","fromNode":"step3_critical","fromSide":"right","toNode":"step4","toSide":"left"}
+	]
+}

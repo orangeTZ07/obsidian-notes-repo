@@ -1,0 +1,21 @@
+{
+	"nodes":[
+		{"id":"root","type":"text","text":"# 数据结构课设：哈夫曼树完整工作流\n\n你的理解**非常正确**！课设需求明确写了：“字符频次数组：统计去重字符以及对应出现次数，作为构建树的权值数据源”。\n\n这意味着你不需要让用户手动去一个个输入字符和权值，而是直接让用户**输入一段明文文本**，程序自动完成后续的所有工作。","x":0,"y":0,"width":500,"height":200},
+		{"id":"encode_1","type":"text","text":"## 🟢 场景一：建树与编码 (Encode)\n\n**1. 输入明文**\n用户输入一长串字符串，例如 `AAABCDEFGGGG`\n*(需求：支持中英数标点，自动过滤空格)*","x":0,"y":300,"width":350,"height":160},
+		{"id":"encode_2","type":"text","text":"**2. 统计频次 (init_Node 的真正任务)**\n程序内部遍历字符串，统计各个字符出现的次数。\n例如：`A:3, B:1, C:1, D:1, E:1, F:1, G:4`","x":450,"y":300,"width":300,"height":160},
+		{"id":"encode_3","type":"text","text":"**3. 初始化叶子结点**\n根据去重后的字符种类，把它们放入 `tree` (vector) 中，权值即为频次。\n`p, l, r` 均初始化为 -1 (或 0)。","x":850,"y":300,"width":300,"height":160},
+		{"id":"encode_4","type":"text","text":"**4. 构建哈夫曼树 & 生成编码表**\n每次选出权值最小的两个节点合并，直到建成整棵树。\n然后从根节点到叶子节点，左0右1，得出每个字符的独密编码。","x":1250,"y":300,"width":300,"height":160},
+		{"id":"decode_1","type":"text","text":"## 🔵 场景二：译码 (Decode)\n\n**1. 输入密文**\n用户输入一串由 0 和 1 组成的密文字符串，例如 `010111000101`。\n*(需求：必须拦截除0/1之外的非法字符)*","x":0,"y":550,"width":350,"height":160},
+		{"id":"decode_2","type":"text","text":"**2. 树上游走 (核心逻辑)**\n准备一个指针指向哈夫曼树的**根节点**。\n遍历密文字符串：\n- 如果读到 `0`，指针走到 `l`（左孩子）\n- 如果读到 `1`，指针走到 `r`（右孩子）","x":450,"y":550,"width":300,"height":180},
+		{"id":"decode_3","type":"text","text":"**3. 触底输出字符**\n如果指针走到了**叶子节点**（即 `l` 和 `r` 都为 -1 或 0）：\n- 输出该节点对应的字符。\n- 将指针**重新指回根节点**，继续读取下一个密文字符。","x":850,"y":550,"width":300,"height":180}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"root","fromSide":"bottom","toNode":"encode_1","toSide":"top"},
+		{"id":"e2","fromNode":"encode_1","fromSide":"right","toNode":"encode_2","toSide":"left"},
+		{"id":"e3","fromNode":"encode_2","fromSide":"right","toNode":"encode_3","toSide":"left"},
+		{"id":"e4","fromNode":"encode_3","fromSide":"right","toNode":"encode_4","toSide":"left"},
+		{"id":"e5","fromNode":"root","fromSide":"bottom","toNode":"decode_1","toSide":"top"},
+		{"id":"e6","fromNode":"decode_1","fromSide":"right","toNode":"decode_2","toSide":"left"},
+		{"id":"e7","fromNode":"decode_2","fromSide":"right","toNode":"decode_3","toSide":"left"}
+	]
+}

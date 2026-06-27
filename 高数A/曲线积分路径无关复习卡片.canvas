@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"id1","type":"text","text":"# 🎯 曲线积分与路径无关\n\n如果一个积分 $\\int_L Pdx + Qdy$ 与路径无关，代表什么呢？\n代表积分只和起点和终点有关！相当于物理中的**保守力做功**。只要是在单连通区域内（本题说不经过 y=0 的区域D，可以把上下半平面分别看作单连通区域），这就是保守场。","x":-400,"y":-300,"width":400,"height":200},
+		{"id":"id2","type":"text","text":"# 🔑 核心条件（充要条件）\n对于二维平面上的区域，积分与路径无关的充要条件是：\n$$ \\frac{\\partial P}{\\partial y} = \\frac{\\partial Q}{\\partial x} $$","x":100,"y":-300,"width":400,"height":200},
+		{"id":"id3","type":"text","text":"# 🧩 本题 P 和 Q 的拆解\n根据题目给的式子：\n$$ P = \\frac{x}{y}(x^2+y^2)^a = xy^{-1}(x^2+y^2)^a $$\n$$ Q = -\\frac{x^2}{y^2}(x^2+y^2)^a = -x^2y^{-2}(x^2+y^2)^a $$","x":-400,"y":0,"width":400,"height":200},
+		{"id":"id4","type":"text","text":"# 🚧 偏导数怎么求？（防坑指南）\n**求 $\\frac{\\partial P}{\\partial y}$ 时，把 $x$ 当常数看。**\n必须用乘法求导公式 $(uv)' = u'v + uv'$！\n\n- $u = y^{-1}$，它的导数是 $-y^{-2}$\n- $v = (x^2+y^2)^a$，它的导数是 $a(x^2+y^2)^{a-1} \\cdot 2y$（千万别忘了链式法则乘以 $2y$！）","x":100,"y":0,"width":450,"height":250},
+		{"id":"id5","type":"text","text":"# 💥 最终化简与系数比较\n化简后并提取公因式 $(x^2+y^2)^{a-1}$ 得到：\n$\\frac{\\partial P}{\\partial y} = (x^2+y^2)^{a-1}[-\\frac{x^3}{y^2} - x + 2ax]$\n$\\frac{\\partial Q}{\\partial x} = (x^2+y^2)^{a-1}[-\\frac{2x^3}{y^2} - 2x - \\frac{2ax^3}{y^2}]$\n\n两式要想恒等，各项系数必须一样。\n对比 $x$ 的系数：\n$-1 + 2a = -2 \\implies 2a = -1 \\implies a = -1/2$","x":100,"y":300,"width":450,"height":250}
+	],
+	"edges":[
+		{"id":"edge1","fromNode":"id1","fromSide":"right","toNode":"id2","toSide":"left"},
+		{"id":"edge2","fromNode":"id2","fromSide":"bottom","toNode":"id3","toSide":"top"},
+		{"id":"edge3","fromNode":"id3","fromSide":"right","toNode":"id4","toSide":"left"},
+		{"id":"edge4","fromNode":"id4","fromSide":"bottom","toNode":"id5","toSide":"top"}
+	]
+}
