@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"n1","type":"text","text":"# 邻接多重表\n专为**无向图**设计的优化存储结构。","x":0,"y":0,"width":350,"height":100},
+		{"id":"n2","type":"text","text":"## 1. 痛点：为什么不用普通的邻接表？\n\n在邻接表中，无向图的一条边 (A, B) 会被存储**两次**：\n- 在A的链表里存一次 (指向B)\n- 在B的链表里存一次 (指向A)\n\n**缺点**：如果要做**删除某条边**、或者**标记某条边已访问**等“针对边”的操作，你需要去两个链表里各找一次，非常麻烦，时间复杂度高，而且容易出错遗漏。","x":-450,"y":150,"width":380,"height":260},
+		{"id":"n4","type":"text","text":"## 3. 结构拆解\n\n### 顶点结点\n| `data` (顶点数据) | `firstedge` (第一条依附该顶点的边) |\n\n### 边结点\n| `mark` (标志位) | `ivex` (顶点i) | `ilink` (i的下一条边) | `jvex` (顶点j) | `jlink` (j的下一条边) | `info` (权重等) |\n\n**解读**：\n- `ivex` 和 `jvex` 是这条边两头的顶点序号。\n- `ilink` 是属于 `ivex` 这个顶点的链表指针，指向下一条连着 `ivex` 的边。\n- `jlink` 是属于 `jvex` 这个顶点的链表指针，指向下一条连着 `jvex` 的边。","x":-20,"y":450,"width":600,"height":380},
+		{"id":"n5","type":"text","text":"## 4. 形象比喻\n\n想象有两个火车站（顶点 `ivex` 和 `jvex`），它们之间有一条直达铁路（边结点）。\n\n- `ilink` 就是从 `ivex` 出发的其他铁路。\n- `jlink` 就是从 `jvex` 出发的其他铁路。\n\n这个边结点，就像是一个**十字路口**，两条不同的链表在这个结点相遇，然后又各自沿着 `ilink` 和 `jlink` 继续延伸。","x":-20,"y":880,"width":600,"height":220},
+		{"id":"n3","type":"text","text":"## 2. 核心思想：共享边结点\n\n既然一条边本来就只连接着两个顶点，我们就**只创建一个“边结点”**！\n\n然后，让这两个顶点的链表，就像两根不同颜色的毛线一样，同时**穿过**这同一个边结点。\n\n这样，要删边或标记边，只要操作这一个公共结点就行了！","x":520,"y":100,"width":380,"height":260}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"n1","fromSide":"bottom","toNode":"n2","toSide":"top"},
+		{"id":"e2","fromNode":"n1","fromSide":"bottom","toNode":"n3","toSide":"top"},
+		{"id":"e3","fromNode":"n3","fromSide":"bottom","toNode":"n4","toSide":"top"},
+		{"id":"e4","fromNode":"n4","fromSide":"bottom","toNode":"n5","toSide":"top"}
+	]
+}

@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    {"id": "center", "type": "text", "text": "## 💥 哈希冲突\n\n**“两辆车算出了同一个车位！”**", "x": 0, "y": 0, "width": 300, "height": 100, "color": "1"},
+    {"id": "open_addr", "type": "text", "text": "### 1. 开放定址法\n\n**“本车位被占，在停车场里死皮赖脸找别的空位”**\n\n- **线性探测**: +1, +2, +3... (容易产生堆积)\n- **二次探测**: +1², -1², +2², -2²... (缓解堆积)\n- **伪随机探测**: 加上一个伪随机数", "x": -400, "y": -250, "width": 350, "height": 200, "color": "2"},
+    {"id": "chaining", "type": "text", "text": "### 2. 链地址法 (拉链法)\n\n**“就地建个立体车库”**\n\n所有冲突的元素，都在该地址下挂一个单链表。\n\n*优点：不会产生聚集现象，最常用！*", "x": 400, "y": -250, "width": 300, "height": 160, "color": "3"},
+    {"id": "rehash", "type": "text", "text": "### 3. 再哈希法\n\n**“换个保安重新算”**\n\n准备多个哈希函数 $H_1, H_2, ...$ \n冲突了就换下一个函数重新计算地址。", "x": -400, "y": 250, "width": 300, "height": 160, "color": "4"},
+    {"id": "overflow", "type": "text", "text": "### 4. 公共溢出区\n\n**“统统赶去备用停车场”**\n\n主表发生冲突的元素，一律放入一个专门的溢出表（备用区）中。", "x": 400, "y": 250, "width": 300, "height": 160, "color": "5"},
+    {"id": "index_wrong", "type": "text", "text": "❌ **错误选项提示**\n\n“建立索引表” 属于**索引存储**方式（像书的目录），是一种独立的数据结构存储方式，**绝对不是**用来解决哈希冲突的！", "x": 0, "y": 450, "width": 350, "height": 120, "color": "6"}
+  ],
+  "edges": [
+    {"id": "e1", "fromNode": "center", "fromSide": "top", "toNode": "open_addr", "toSide": "bottom"},
+    {"id": "e2", "fromNode": "center", "fromSide": "top", "toNode": "chaining", "toSide": "bottom"},
+    {"id": "e3", "fromNode": "center", "fromSide": "bottom", "toNode": "rehash", "toSide": "top"},
+    {"id": "e4", "fromNode": "center", "fromSide": "bottom", "toNode": "overflow", "toSide": "top"},
+    {"id": "e5", "fromNode": "center", "fromSide": "bottom", "toNode": "index_wrong", "toSide": "top"}
+  ]
+}

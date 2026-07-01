@@ -1,0 +1,41 @@
+import json
+import os
+
+def create_canvas(filename, nodes, edges):
+    canvas = {"nodes": nodes, "edges": edges}
+    path = os.path.join("/home/orange114/work/obsidian-notes-repo/数据结构期末冲刺", filename)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(canvas, f, indent=2, ensure_ascii=False)
+    print(f"Created {path}")
+
+# Canvas 1: Prim vs Dijkstra
+nodes1 = [
+    {
+        "id": "root", "type": "text",
+        "text": "# 辨析：Prim 还是 Dijkstra？\n\n**核心问题：题目到底要求什么？**\n物流配送路径优化系统，找到**最短配送路径**以降低成本。",
+        "x": 0, "y": -200, "width": 450, "height": 150, "color": "1"
+    },
+    {
+        "id": "prim-node", "type": "text",
+        "text": "## 🌲 最小生成树 (MST)\n**算法**：Prim (普里姆) / Kruskal (克鲁斯卡尔)\n\n**目的**：把**所有**的点连起来，并且用的“修路材料”最少。\n\n**适用场景**：铺设光缆、修筑公路网、自来水管道铺设。\n*(要求所有节点互通，但不保证任意两点间的路径是最短的)*\n\n**比喻**：政府公路局修路。",
+        "x": -300, "y": 50, "width": 350, "height": 250, "color": "4"
+    },
+    {
+        "id": "dijkstra-node", "type": "text",
+        "text": "## 🚚 最短路径 (Shortest Path)\n**算法**：Dijkstra (迪杰斯特拉) / Floyd (弗洛伊德)\n\n**目的**：找从**起点**到**终点**距离最短的那条路。\n\n**适用场景**：物流配送、GPS导航、外卖路线规划。\n*(针对特定的起点和终点，不一定要走遍所有点)*\n\n**比喻**：快递员送货。",
+        "x": 250, "y": 50, "width": 350, "height": 250, "color": "3"
+    },
+    {
+        "id": "conclusion", "type": "text",
+        "text": "### 🎯 结论\n题目中明确提到**“最短配送路径”**，说明这是从配送中心到目的地的路径规划，属于**最短路径问题**。\n\n因此，**不能使用Prim算法**，应该使用 **Dijkstra算法**（迪杰斯特拉）。",
+        "x": -25, "y": 380, "width": 500, "height": 180, "color": "6"
+    }
+]
+edges1 = [
+    {"id": "e1", "fromNode": "root", "fromSide": "bottom", "toNode": "prim-node", "toSide": "top"},
+    {"id": "e2", "fromNode": "root", "fromSide": "bottom", "toNode": "dijkstra-node", "toSide": "top"},
+    {"id": "e3", "fromNode": "dijkstra-node", "fromSide": "bottom", "toNode": "conclusion", "toSide": "top"}
+]
+
+create_canvas("辨析_最小生成树与最短路径.canvas", nodes1, edges1)
+

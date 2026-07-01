@@ -1,0 +1,70 @@
+{
+	"nodes": [
+		{
+			"id": "node_title",
+			"x": 0,
+			"y": -300,
+			"width": 500,
+			"height": 100,
+			"type": "text",
+			"text": "## 🏔️ 堆的核心操作：向上调整 vs 向下调整\n把最大堆想象成一个**实力至上**的公司，每个父节点（领导）的实力必须 $\\ge$ 子节点（下属）。"
+		},
+		{
+			"id": "node_up",
+			"x": -300,
+			"y": -100,
+			"width": 400,
+			"height": 250,
+			"type": "text",
+			"text": "### 🎈 向上调整 (Sift-up)\n- **什么时候用？**：**插入新元素**时。\n- **怎么做？**：新员工入职，默认坐在最底层（数组末尾）。他只跟自己的**直属领导（父节点）**比。\n- **动作**：如果新员工能力 > 领导，两人换位（晋升！）。继续跟新领导比，直到拼不过领导，或者干到了全公司最顶端（根节点）。\n- **代码核心**：当前节点 $i$ 与父节点 $i/2$ 比较。"
+		},
+		{
+			"id": "node_down",
+			"x": 300,
+			"y": -100,
+			"width": 400,
+			"height": 280,
+			"type": "text",
+			"text": "### ⚓ 向下调整 (Sift-down)\n- **什么时候用？**：**删除堆顶**（或建初堆）时。\n- **怎么做？**：老CEO退休（堆顶被删），我们把最底层的实习生（数组最后一个元素）强行拉到CEO位置。然后他发现自己镇不住场子。\n- **动作**：他把左右两个直属下属（左右孩子）叫来，挑出**最强**的那个。如果最强下属比自己强，两人换位（降职！）。循环往复，直到他比现在的下属强，或者被贬到了最底层。\n- **代码核心**：当前节点 $i$ 与左右孩子 $2i, 2i+1$ 中较大的比较。"
+		},
+		{
+			"id": "node_array",
+			"x": 0,
+			"y": 250,
+			"width": 500,
+			"height": 150,
+			"type": "text",
+			"text": "### 🔢 严蔚敏版“数组模拟二叉树”坐标系\n*(假设数组下标从 1 开始)*\n- 我的位置是 $i$\n- 我的**直属领导**在：$\\lfloor i / 2 \\rfloor$\n- 我的**左下属**在：$2i$\n- 我的**右下属**在：$2i + 1$"
+		}
+	],
+	"edges": [
+		{
+			"id": "edge1",
+			"fromNode": "node_title",
+			"fromSide": "bottom",
+			"toNode": "node_up",
+			"toSide": "top"
+		},
+		{
+			"id": "edge2",
+			"fromNode": "node_title",
+			"fromSide": "bottom",
+			"toNode": "node_down",
+			"toSide": "top"
+		},
+		{
+			"id": "edge3",
+			"fromNode": "node_up",
+			"fromSide": "bottom",
+			"toNode": "node_array",
+			"toSide": "left"
+		},
+		{
+			"id": "edge4",
+			"fromNode": "node_down",
+			"fromSide": "bottom",
+			"toNode": "node_array",
+			"toSide": "right"
+		}
+	]
+}

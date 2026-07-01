@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "id": "c1",
+      "type": "text",
+      "text": "## 链表归并排序\n\n**空间复杂度: O(1)**\n(这就是它在链表上比在数组上更受青睐的原因！不需要开辟新数组)",
+      "x": -250,
+      "y": -200,
+      "width": 300,
+      "height": 150
+    },
+    {
+      "id": "c2",
+      "type": "text",
+      "text": "### 1. 找中点并断开 (分)\n\n**快慢指针法**：\n- 快指针每次走两步\n- 慢指针每次走一步\n- 当快指针走到尽头，慢指针正好在**中点**\n\n⚠️ **核心易错点**：找到中点后，一定要把前半段和后半段断开！\n`slow->next = NULL;`",
+      "x": -450,
+      "y": 0,
+      "width": 300,
+      "height": 200
+    },
+    {
+      "id": "c3",
+      "type": "text",
+      "text": "### 2. 递归排序 (治)\n\n相信递归的魔法，直接对断开后的“左半段”和“右半段”各自调用 MergeSort。\n\n返回的结果就是两条各自排好序的链表。",
+      "x": -50,
+      "y": 0,
+      "width": 250,
+      "height": 200
+    },
+    {
+      "id": "c4",
+      "type": "text",
+      "text": "### 3. 合并有序链表 (并)\n\n引入 **虚拟头节点 (dummy node)**。\n把两条有序链表像“拉拉链”一样，挨个比较大小串联起来。\n\n直到其中一条串完，把另一条剩下的直接接到尾巴上。",
+      "x": 280,
+      "y": 0,
+      "width": 300,
+      "height": 200
+    }
+  ],
+  "edges": [
+    {"id": "e1", "fromNode": "c1", "fromSide": "bottom", "toNode": "c2", "toSide": "top"},
+    {"id": "e2", "fromNode": "c2", "fromSide": "right", "toNode": "c3", "toSide": "left"},
+    {"id": "e3", "fromNode": "c3", "fromSide": "right", "toNode": "c4", "toSide": "left"}
+  ]
+}

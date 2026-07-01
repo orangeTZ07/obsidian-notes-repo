@@ -1,0 +1,84 @@
+{
+	"nodes": [
+		{
+			"id": "c1",
+			"type": "text",
+			"text": "# 连通分量 (Connected Component)\n\n可以把无向图想象成一片**群岛**。\n顶点就是一座座**岛屿**，边就是连接岛屿的**桥梁**。\n一个连通分量就是一个**“互通的岛群”**。",
+			"x": -200,
+			"y": -100,
+			"width": 350,
+			"height": 180,
+			"color": "2"
+		},
+		{
+			"id": "c2",
+			"type": "text",
+			"text": "## 严蔚敏教材定义\n\n**无向图**中的**极大连通子图**。",
+			"x": 250,
+			"y": -100,
+			"width": 300,
+			"height": 100,
+			"color": "4"
+		},
+		{
+			"id": "c3",
+			"type": "text",
+			"text": "### 什么是“极大”？\n\n“极大”的意思是**不能再贪心了**。\n在这个互通的圈子里，如果再从原图里随便拉一个外面的顶点进来，这个圈子就不连通了。\n**结论：连通分量就是尽可能大的连通圈子。**",
+			"x": 250,
+			"y": 60,
+			"width": 350,
+			"height": 180,
+			"color": "3"
+		},
+		{
+			"id": "c4",
+			"type": "text",
+			"text": "## 如何找出所有连通分量？\n\n核心思想：**图遍历 (DFS / BFS)** + **访问标记 (visited数组)**",
+			"x": -200,
+			"y": 180,
+			"width": 350,
+			"height": 120,
+			"color": "1"
+		},
+		{
+			"id": "c5",
+			"type": "text",
+			"text": "### 探索过程：\n1. 找一个**未访问**的顶点作为起点。\n2. 从它开始进行一次 DFS 或 BFS，把能顺着边走到的顶点全部标记为“已访问”。\n3. **这一次走过的所有顶点，就构成了一个连通分量！**\n4. 重复步骤1，直到所有顶点都被去过。\n\n**结论：主函数中调用了几次 DFS/BFS 遍历函数，原图就有几个连通分量。**",
+			"x": 250,
+			"y": 300,
+			"width": 450,
+			"height": 240,
+			"color": "5"
+		}
+	],
+	"edges": [
+		{
+			"id": "e1",
+			"fromNode": "c1",
+			"fromSide": "right",
+			"toNode": "c2",
+			"toSide": "left"
+		},
+		{
+			"id": "e2",
+			"fromNode": "c2",
+			"fromSide": "bottom",
+			"toNode": "c3",
+			"toSide": "top"
+		},
+		{
+			"id": "e3",
+			"fromNode": "c1",
+			"fromSide": "bottom",
+			"toNode": "c4",
+			"toSide": "top"
+		},
+		{
+			"id": "e4",
+			"fromNode": "c4",
+			"fromSide": "right",
+			"toNode": "c5",
+			"toSide": "left"
+		}
+	]
+}

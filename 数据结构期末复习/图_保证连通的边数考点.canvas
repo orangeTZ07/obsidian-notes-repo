@@ -1,0 +1,84 @@
+{
+	"nodes": [
+		{
+			"id": "q1",
+			"type": "text",
+			"text": "# 期末必考题型\n**“有 n 个顶点的无向图，至少需要多少条边才能【保证】它一定连通？”**",
+			"x": -250,
+			"y": -150,
+			"width": 500,
+			"height": 100,
+			"color": "1"
+		},
+		{
+			"id": "q2",
+			"type": "text",
+			"text": "## 1. 逆向思维找“最坏情况”\n怎么才能在**边数尽可能多**的情况下，让图依然**不连通**？\n**策略：** 让 n-1 个顶点疯狂抱团（形成完全图），孤立最后 1 个顶点！",
+			"x": -250,
+			"y": -20,
+			"width": 300,
+			"height": 150,
+			"color": "3"
+		},
+		{
+			"id": "q3",
+			"type": "text",
+			"text": "## 2. 计算“最坏情况”的边数\nn-1 个顶点的完全图，边数为：\n**C(n-1, 2) = (n-1)(n-2) / 2**\n在这个边数下，那 1 个孤儿依然没有桥连出去。",
+			"x": 100,
+			"y": -20,
+			"width": 300,
+			"height": 150,
+			"color": "4"
+		},
+		{
+			"id": "q4",
+			"type": "text",
+			"text": "## 3. 压死骆驼的最后一根稻草\n既然小团体内部的边已经全满了（无法再加边）。\n此时如果**再多给 1 条边**，就只能被迫连向那个孤立的顶点，全图瞬间连通！",
+			"x": -100,
+			"y": 180,
+			"width": 350,
+			"height": 140,
+			"color": "2"
+		},
+		{
+			"id": "q5",
+			"type": "text",
+			"text": "## 结论公式\n保证 n 个顶点一定连通的最少边数：\n**(n-1)(n-2) / 2 + 1**",
+			"x": -100,
+			"y": 360,
+			"width": 350,
+			"height": 100,
+			"color": "5"
+		}
+	],
+	"edges": [
+		{
+			"id": "e1",
+			"fromNode": "q1",
+			"fromSide": "bottom",
+			"toNode": "q2",
+			"toSide": "top"
+		},
+		{
+			"id": "e2",
+			"fromNode": "q2",
+			"fromSide": "right",
+			"toNode": "q3",
+			"toSide": "left"
+		},
+		{
+			"id": "e3",
+			"fromNode": "q3",
+			"fromSide": "bottom",
+			"toNode": "q4",
+			"toSide": "right"
+		},
+		{
+			"id": "e4",
+			"fromNode": "q4",
+			"fromSide": "bottom",
+			"toNode": "q5",
+			"toSide": "top"
+		}
+	]
+}

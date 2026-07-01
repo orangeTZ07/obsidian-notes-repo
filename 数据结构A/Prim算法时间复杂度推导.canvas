@@ -1,0 +1,115 @@
+{
+  "nodes": [
+    {
+      "id": "root",
+      "type": "text",
+      "text": "# Prim 算法时间复杂度\n\n**结论**：时间复杂度为 **$O(|V|^2)$** \n(或者写成 $O(n^2)$，其中 $n$ 为顶点数，也就是 $|V|$ )",
+      "x": 100,
+      "y": -150,
+      "width": 400,
+      "height": 150,
+      "color": "1"
+    },
+    {
+      "id": "outer-loop",
+      "type": "text",
+      "text": "### 1. 外层循环：拉人入伙\n我们总共有 $n$ 个顶点，起点算作第一个加入。\n还需要加入剩下的 $n-1$ 个顶点。\n\n**代价：循环 $n-1$ 次**",
+      "x": -200,
+      "y": 100,
+      "width": 300,
+      "height": 180,
+      "color": "4"
+    },
+    {
+      "id": "inner-find",
+      "type": "text",
+      "text": "### 2. 内层操作A：寻找最近点\n每次我们要从还没有加入的顶点中，挑一个离当前生成树最近的（代价最小的）。\n在 `closedge` 数组中扫描一遍所有的未加入顶点。\n\n**代价：约 $n$ 次比较，即 $O(n)$**",
+      "x": 150,
+      "y": 100,
+      "width": 320,
+      "height": 180,
+      "color": "4"
+    },
+    {
+      "id": "inner-update",
+      "type": "text",
+      "text": "### 3. 内层操作B：更新情报\n新找出来的点加入树后，它带来了新的连接！\n我们要看看，其他的未加入点是不是通过这个新点，能更便宜地连接到树上？\n再次遍历更新 `closedge` 数组。\n\n**代价：约 $n$ 次比较，即 $O(n)$**",
+      "x": 550,
+      "y": 100,
+      "width": 320,
+      "height": 180,
+      "color": "4"
+    },
+    {
+      "id": "math-sum",
+      "type": "text",
+      "text": "### 综合计算\n\n$$ T(n) = (n-1) \\times ( O(n) + O(n) ) = O(n^2) $$\n\n**因为完全不涉及边数 $|E|$，所以它不受图里有多少条边的影响！**",
+      "x": 100,
+      "y": 350,
+      "width": 450,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "kruskal-cmp",
+      "type": "text",
+      "text": "### 🎯 期末考点大联动：算法选择\n\n| 算法 | 时间复杂度 | 决定因素 | 适合图类型 |\n| :--- | :--- | :--- | :--- |\n| **Prim** (加点法) | $O(|V|^2)$ | 仅与顶点数有关 | **稠密图** (点少边多) |\n| **Kruskal** (加边法) | $O(|E| \\log |E|)$ | 与边数密切相关 | **稀疏图** (点多边少) |",
+      "x": 100,
+      "y": 550,
+      "width": 550,
+      "height": 220,
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "fromNode": "root",
+      "fromSide": "bottom",
+      "toNode": "outer-loop",
+      "toSide": "top"
+    },
+    {
+      "id": "e2",
+      "fromNode": "root",
+      "fromSide": "bottom",
+      "toNode": "inner-find",
+      "toSide": "top"
+    },
+    {
+      "id": "e3",
+      "fromNode": "root",
+      "fromSide": "bottom",
+      "toNode": "inner-update",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "fromNode": "outer-loop",
+      "fromSide": "bottom",
+      "toNode": "math-sum",
+      "toSide": "top"
+    },
+    {
+      "id": "e5",
+      "fromNode": "inner-find",
+      "fromSide": "bottom",
+      "toNode": "math-sum",
+      "toSide": "top"
+    },
+    {
+      "id": "e6",
+      "fromNode": "inner-update",
+      "fromSide": "bottom",
+      "toNode": "math-sum",
+      "toSide": "top"
+    },
+    {
+      "id": "e7",
+      "fromNode": "math-sum",
+      "fromSide": "bottom",
+      "toNode": "kruskal-cmp",
+      "toSide": "top"
+    }
+  ]
+}

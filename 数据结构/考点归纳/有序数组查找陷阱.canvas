@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "c1f72740-410a-4712-a8c6-65be4cda7142",
+      "type": "text",
+      "text": "# 💡 核心考点：有序数组的查找",
+      "x": -300,
+      "y": -100,
+      "width": 300,
+      "height": 100
+    },
+    {
+      "id": "841b5212-70b1-4171-8bc6-df919293ab5d",
+      "type": "text",
+      "text": "题眼：\n1. **有序**\n2. **查找**",
+      "x": 100,
+      "y": -200,
+      "width": 250,
+      "height": 120
+    },
+    {
+      "id": "70d302a4-b003-4f01-a1cf-ff43a12a52ef",
+      "type": "text",
+      "text": "🔥 必须条件反射想到：\n**折半查找 (二分查找)**\n\n时间复杂度：**O(log n)**",
+      "x": 100,
+      "y": 0,
+      "width": 250,
+      "height": 120
+    },
+    {
+      "id": "e2d53efc-5296-419b-b9f4-2794ebed1b5a",
+      "type": "text",
+      "text": "❌ 常见丢分点：\n直接使用 `for` 循环遍历（时间复杂度 `O(n)`）。虽然能实现功能，但在 10 分的算法题里，通常只能拿到一半分数甚至更少，因为**没有利用到“有序”这一关键特性**。",
+      "x": 450,
+      "y": 0,
+      "width": 300,
+      "height": 180
+    },
+    {
+      "id": "902d38fa-05d5-45d2-a7d5-d14f4e70e9a4",
+      "type": "text",
+      "text": "二分查找变体：寻找“最后一个”符合条件的元素\n\n**关键判断逻辑**：\n```c\nif (A[mid] < target) {\n    if (mid == n - 1 || A[mid + 1] >= target) {\n        // 找到了！\n    }\n}\n```",
+      "x": 100,
+      "y": 200,
+      "width": 400,
+      "height": 240
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "fromNode": "c1f72740-410a-4712-a8c6-65be4cda7142",
+      "fromSide": "right",
+      "toNode": "841b5212-70b1-4171-8bc6-df919293ab5d",
+      "toSide": "left"
+    },
+    {
+      "id": "e2",
+      "fromNode": "c1f72740-410a-4712-a8c6-65be4cda7142",
+      "fromSide": "right",
+      "toNode": "70d302a4-b003-4f01-a1cf-ff43a12a52ef",
+      "toSide": "left"
+    },
+    {
+      "id": "e3",
+      "fromNode": "70d302a4-b003-4f01-a1cf-ff43a12a52ef",
+      "fromSide": "right",
+      "toNode": "e2d53efc-5296-419b-b9f4-2794ebed1b5a",
+      "toSide": "left"
+    },
+    {
+      "id": "e4",
+      "fromNode": "70d302a4-b003-4f01-a1cf-ff43a12a52ef",
+      "fromSide": "bottom",
+      "toNode": "902d38fa-05d5-45d2-a7d5-d14f4e70e9a4",
+      "toSide": "top"
+    }
+  ]
+}

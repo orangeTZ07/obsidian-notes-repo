@@ -1,0 +1,74 @@
+{
+  "nodes": [
+    {
+      "id": "root",
+      "type": "text",
+      "text": "# BFS 与 Dijkstra 的前世今生\n\nBFS (广度优先搜索) 就像是 Dijkstra 的“青春版”。",
+      "x": 0,
+      "y": -200,
+      "width": 450,
+      "height": 100,
+      "color": "1"
+    },
+    {
+      "id": "bfs-node",
+      "type": "text",
+      "text": "## 🚶‍♂️ BFS (广度优先搜索)\n\n**核心法则**：按“跳数”(边数) 扩散。\n**适用场景**：**无权图**（每条路长度都是1）。\n\n**例子**：从A找B\n`A --(10公里)--> B` (1跳)\n`A --(2公里)--> C --(1公里)--> B` (2跳)\n\n**BFS的结论**：A直接到B最近，因为只要1跳！(在物流中，这绝对是错的)",
+      "x": -300,
+      "y": 0,
+      "width": 380,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "dijkstra-node",
+      "type": "text",
+      "text": "## 🚗 Dijkstra (迪杰斯特拉)\n\n**核心法则**：按“真实代价”(权值) 扩散。\n**适用场景**：**带权图**（路有长有短，有油费高低）。\n\n**同上的例子**：\nDijkstra 探路发现：\n1. 去C只要2，去B要10。先走到C！\n2. 站在C往四处看，发现去B只要1。\n3. `A->C->B` 只要 2+1=3。比原本的10小。\n\n**Dijkstra的结论**：绕道C去B最近！完美解决物流问题。",
+      "x": 200,
+      "y": 0,
+      "width": 380,
+      "height": 260,
+      "color": "3"
+    },
+    {
+      "id": "code-node",
+      "type": "text",
+      "text": "### 💻 代码上的区别\n- **BFS** 使用 **普通队列 (Queue)**。先进先出，不管距离。\n- **Dijkstra** 使用 **优先队列** (或者每次循环找 `min_dist`)。谁距离起点**权值最小**，谁就先出列去探索四周。",
+      "x": -50,
+      "y": 300,
+      "width": 500,
+      "height": 160,
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "fromNode": "root",
+      "fromSide": "bottom",
+      "toNode": "bfs-node",
+      "toSide": "top"
+    },
+    {
+      "id": "e2",
+      "fromNode": "root",
+      "fromSide": "bottom",
+      "toNode": "dijkstra-node",
+      "toSide": "top"
+    },
+    {
+      "id": "e3",
+      "fromNode": "bfs-node",
+      "fromSide": "bottom",
+      "toNode": "code-node",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "fromNode": "dijkstra-node",
+      "fromSide": "bottom",
+      "toNode": "code-node",
+      "toSide": "top"
+    }
+  ]
+}

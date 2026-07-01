@@ -1,0 +1,56 @@
+import json
+
+nodes = [
+    {
+        "id": "kruskal-core",
+        "type": "text",
+        "text": "# Kruskal 为什么偏爱稀疏图？\n\n核心一句话：**Kruskal 算法的命根子是“边”，图里的边越少，它的工作量就越小！**",
+        "x": 0, "y": -150, "width": 500, "height": 120, "color": "1"
+    },
+    {
+        "id": "step1-sort",
+        "type": "text",
+        "text": "### 第一步：对所有边大排序\nKruskal 第一步就是把图里所有的边（设为 $e$ 条）抽出来，按长短排个序。\n\n**耗时：** 排序的代价是 $O(e \\log e)$",
+        "x": -250, "y": 50, "width": 300, "height": 180, "color": "2"
+    },
+    {
+        "id": "step2-pick",
+        "type": "text",
+        "text": "### 第二步：从小到大挑边\n挨个看排序好的边，如果连起来不形成回路，就采纳它。这里用到了“并查集”。\n\n**耗时：** 查回路非常快，几乎是 $O(e)$",
+        "x": 250, "y": 50, "width": 300, "height": 180, "color": "2"
+    },
+    {
+        "id": "time-complex",
+        "type": "text",
+        "text": "### 总时间复杂度\n\n大头在第一步的排序上！\n$$ T(e) = O(e \\log e) $$\n你可以看到，这个公式里全是 $e$（边），完全没有 $v$（顶点）的影子！",
+        "x": 0, "y": 300, "width": 400, "height": 160, "color": "3"
+    },
+    {
+        "id": "sparse-case",
+        "type": "text",
+        "text": "### 场景模拟：如果是【稀疏图】\n边很少，假设边数 $e$ 差不多就等于顶点数 $v$。\n- **Kruskal 耗时：** $O(v \\log v)$\n- **Prim 耗时：** 雷打不动的 $O(v^2)$\n\n**赢家：** Kruskal！ ($v \\log v$ 远小于 $v^2$)",
+        "x": -250, "y": 520, "width": 350, "height": 180, "color": "6"
+    },
+    {
+        "id": "dense-case",
+        "type": "text",
+        "text": "### 场景模拟：如果是【稠密图】\n边非常多，每个点都互相连，边数 $e \\approx v^2$。\n- **Kruskal 耗时：** $O(v^2 \\log (v^2)) = O(v^2 \\log v)$\n- **Prim 耗时：** 雷打不动的 $O(v^2)$\n\n**赢家：** Prim！ ($v^2$ 小于 $v^2 \\log v$)",
+        "x": 200, "y": 520, "width": 350, "height": 180, "color": "5"
+    }
+]
+
+edges = [
+    {"id": "e1", "fromNode": "kruskal-core", "fromSide": "bottom", "toNode": "step1-sort", "toSide": "top"},
+    {"id": "e2", "fromNode": "kruskal-core", "fromSide": "bottom", "toNode": "step2-pick", "toSide": "top"},
+    {"id": "e3", "fromNode": "step1-sort", "fromSide": "bottom", "toNode": "time-complex", "toSide": "top"},
+    {"id": "e4", "fromNode": "step2-pick", "fromSide": "bottom", "toNode": "time-complex", "toSide": "top"},
+    {"id": "e5", "fromNode": "time-complex", "fromSide": "bottom", "toNode": "sparse-case", "toSide": "top"},
+    {"id": "e6", "fromNode": "time-complex", "fromSide": "bottom", "toNode": "dense-case", "toSide": "top"}
+]
+
+canvas = {"nodes": nodes, "edges": edges}
+
+with open("/home/orange114/work/obsidian-notes-repo/数据结构A/Kruskal为什么适合稀疏图解析.canvas", "w", encoding="utf-8") as f:
+    json.dump(canvas, f, indent=2, ensure_ascii=False)
+
+print("Canvas created.")
