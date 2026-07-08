@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# 多机多卡分布式推理\n核心问题：如何把宿舍里几台带显卡的电脑连起来，跑超大的AI模型？","x":0,"y":0,"width":450,"height":100,"color":"1"},
+		{"id":"challenge","type":"text","text":"### 核心痛点：带宽鸿沟\n- **单机内（主板PCIE）**：显卡之间通讯速度极快，像**八车道高速公路**（几十上百GB/s）。\n- **多机之间（网线/WiFi）**：电脑和电脑之间的网络速度非常慢，像**乡间小泥路**（千兆网线才125MB/s）。\n**结论**：如果像单机那样频繁交换数据，多机会卡死在网络传输上！","x":-250,"y":150,"width":450,"height":200,"color":"2"},
+		{"id":"solution1","type":"text","text":"### 错误的串联方式：张量并行 (Tensor Parallelism)\n把模型的一层切开，大家一起算同一层。\n**结果**：计算一点点，就要互相通信对齐数据。在“乡间小路”上疯狂来回跑，直接堵死！不适合多机！","x":250,"y":150,"width":400,"height":150,"color":"3"},
+		{"id":"solution2","type":"text","text":"### 正确的串联方式：流水线并行 (Pipeline Parallelism)\n**像工厂流水线一样切分模型！**\n- 电脑A只负责模型的 **第1~10层**\n- 电脑B只负责模型的 **第11~20层**\n\n**流程**：电脑A算完前10层，把**中间结果（非常小的一团数据）**通过网线扔给电脑B。电脑B接着往下算。\n**优势**：在网络上跑的数据很少，完美避开了网速慢的缺点！","x":-100,"y":400,"width":550,"height":230,"color":"4"},
+		{"id":"software","type":"text","text":"### 有哪些现成的软件方案？\n如果你们想自己动手，可以直接用这些工具：\n1. **llama.cpp (RPC模式)**：最简单！一台做主节点，其它做工作节点，直接就能连。\n2. **Petals**：类似BT下载的思路，全世界的网友把显卡贡献出来组成流水线，跑千亿大模型。\n3. **vLLM / Ray**：工业界常用的正规军工具，支持复杂的分布式调度。","x":-50,"y":680,"width":450,"height":220,"color":"5"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"title","fromSide":"bottom","toNode":"challenge","toSide":"top"},
+		{"id":"e2","fromNode":"title","fromSide":"bottom","toNode":"solution1","toSide":"top"},
+		{"id":"e3","fromNode":"challenge","fromSide":"bottom","toNode":"solution2","toSide":"top"},
+		{"id":"e4","fromNode":"solution2","fromSide":"bottom","toNode":"software","toSide":"top"}
+	]
+}

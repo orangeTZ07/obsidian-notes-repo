@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>三维形心直观演示 (Three.js)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        #canvas-container { position: relative; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); background-color: black; border-radius: 8px; overflow: hidden; margin-top: 20px; width: 800px; height: 500px;}
+        .description { max-width: 800px; margin: 0 auto; font-size: 1.1em; color: #333; line-height: 1.6; text-align: left; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .formula { font-size: 1.2em; font-weight: bold; color: #d9534f; background: #fdf2f2; padding: 10px; border-radius: 4px; text-align: center; margin: 15px 0;}
+    </style>
+    <!-- 引入 Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div class="description">
+        <h2 style="margin-top:0;">🧊 三维形心的直观理解：从面积升级到“体积”</h2>
+        <p>现在我们要找的是一个<b>三维立体物体</b>（空间区域 $\Omega$）的平衡点（形心）。想象这是一个密度均匀的实心土豆，你想用一根针顶住它的中心让它不掉下来，这个点就是三维形心 $(\bar{x}, \bar{y}, \bar{z})$！</p>
+        <div class="formula">
+            x̄ = ∭ x dxdydz / ∭ 1 dxdydz<br>
+            (也就是： x 方向杠杆效应之和 / 总休积 V)
+        </div>
+        <p>💡 <b>鼠标拖拽旋转、滚轮缩放看看：</b> 整个三维物体被切成了无数个体积为 $dxdydz$ (或 $dV$) 的微小立方体。分母变成了总“体积”，而分子依然是每个微小立方体的“体积”乘上它到坐标面的距离。</p>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        const container = document.getElementById('canvas-container');
+        
+        // 场景、相机、渲染器
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111111);
+        const camera = new THREE.PerspectiveCamera(45, 800 / 500, 0.1, 1000);
+        camera.position.set(15, 15, 15);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(800, 500);
+        container.appendChild(renderer.domElement);
+
+        // 控制器
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // 坐标轴辅助 (红x, 绿y, 蓝z)
+        const axesHelper = new THREE.AxesHelper(10);
+        scene.add(axesHelper);
+        
+        // 添加坐标轴标签
+        function createTextSprite(message, color) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 64; canvas.height = 64;
+            context.font = 'Bold 40px Arial';
+            context.fillStyle = color;
+            context.fillText(message, 16, 48);
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(2, 2, 2);
+            return sprite;
+        }
+        
+        const xLabel = createTextSprite('X', 'rgba(255,0,0,1)'); xLabel.position.set(11, 0, 0); scene.add(xLabel);
+        const yLabel = createTextSprite('Y', 'rgba(0,255,0,1)'); yLabel.position.set(0, 11, 0); scene.add(yLabel);
+        const zLabel = createTextSprite('Z', 'rgba(100,100,255,1)'); zLabel.position.set(0, 0, 11); scene.add(zLabel);
+
+        // 创建一个代表立体区域的几何体 (例如一个半球体或不规则组合)
+        const geometry = new THREE.SphereGeometry( 5, 32, 16, 0, Math.PI * 2, 0, Math.PI/2 ); // 半球
+        const material = new THREE.MeshPhongMaterial( { 
+            color: 0x3498db, 
+            transparent: true,
+            opacity: 0.4,
+            side: THREE.DoubleSide
+        } );
+        const hemisphere = new THREE.Mesh( geometry, material );
+        // 为了不在原点，平移一下
+        hemisphere.position.set(3, 0, 3);
+        scene.add( hemisphere );
+
+        // 半球的形心: 半径 r=5，对于放在底面中心的半球，z(这里是y向上)方向形心在 3/8 r 处，即 3/8 * 5 = 1.875
+        // 因为我们将其放平移了 (3, 0, 3)，所以形心坐标为 (3, 1.875, 3)
+        const centroidX = 3;
+        const centroidY = 1.875;
+        const centroidZ = 3;
+
+        // 重点画出形心点 (红球)
+        const centroidGeo = new THREE.SphereGeometry(0.3, 16, 16);
+        const centroidMat = new THREE.MeshBasicMaterial({color: 0xe74c3c});
+        const centroidMesh = new THREE.Mesh(centroidGeo, centroidMat);
+        centroidMesh.position.set(centroidX, centroidY, centroidZ);
+        scene.add(centroidMesh);
+
+        // 标出形心文本
+        const centroidLabel = createTextSprite('C', 'rgba(255,255,255,1)'); 
+        centroidLabel.position.set(centroidX, centroidY + 1, centroidZ);
+        scene.add(centroidLabel);
+        
+        // 投影线 (形心到各坐标面的投影)
+        const lineMat = new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.2, gapSize: 0.2 });
+        
+        // C到XZ面(y=0)
+        const pts1 = [new THREE.Vector3(centroidX, centroidY, centroidZ), new THREE.Vector3(centroidX, 0, centroidZ)];
+        const geo1 = new THREE.BufferGeometry().setFromPoints(pts1);
+        const line1 = new THREE.Line(geo1, lineMat); line1.computeLineDistances(); scene.add(line1);
+
+        // 在XZ面的投影点到Z轴和X轴
+        const pts2 = [new THREE.Vector3(centroidX, 0, centroidZ), new THREE.Vector3(centroidX, 0, 0)];
+        const geo2 = new THREE.BufferGeometry().setFromPoints(pts2);
+        const line2 = new THREE.Line(geo2, lineMat); line2.computeLineDistances(); scene.add(line2);
+        
+        const pts3 = [new THREE.Vector3(centroidX, 0, centroidZ), new THREE.Vector3(0, 0, centroidZ)];
+        const geo3 = new THREE.BufferGeometry().setFromPoints(pts3);
+        const line3 = new THREE.Line(geo3, lineMat); line3.computeLineDistances(); scene.add(line3);
+
+        // 画一个微元 dV
+        const dVGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+        const dVMat = new THREE.MeshPhongMaterial({color: 0xf1c40f, transparent: true, opacity: 0.8});
+        const dVMesh = new THREE.Mesh(dVGeo, dVMat);
+        // 放在半球内部的某个位置
+        const dx = 4.5, dy = 1.0, dz = 4.5;
+        dVMesh.position.set(dx, dy, dz);
+        scene.add(dVMesh);
+        
+        const dvLabel = createTextSprite('dV', 'rgba(241,196,15,1)'); 
+        dvLabel.position.set(dx, dy + 1, dz);
+        scene.add(dvLabel);
+
+        // 添加光源
+        const ambientLight = new THREE.AmbientLight(0x404040); // 柔和白光
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(10, 20, 10);
+        scene.add(dirLight);
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame( animate );
+            controls.update();
+            renderer.render( scene, camera );
+        }
+        animate();
+    </script>
+</body>
+</html>

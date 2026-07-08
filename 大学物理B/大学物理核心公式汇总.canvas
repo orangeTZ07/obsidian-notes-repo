@@ -1,0 +1,166 @@
+{
+  "nodes": [
+    {
+      "id": "node_text_title",
+      "type": "text",
+      "text": "# 大学物理公式图谱\\n包含力学和电磁学的核心知识点汇总。",
+      "x": -250,
+      "y": -350,
+      "width": 500,
+      "height": 150
+    },
+    {
+      "id": "node_rigid",
+      "type": "file",
+      "file": "大学物理B/刚体力学/转动惯量核心公式.md",
+      "x": -600,
+      "y": -50,
+      "width": 500,
+      "height": 600
+    },
+    {
+      "id": "node_em",
+      "type": "file",
+      "file": "大学物理B/电磁学/静电场电场强度核心公式.md",
+      "x": 100,
+      "y": -50,
+      "width": 500,
+      "height": 600
+    },
+    {
+      "id": "node_magnetic",
+      "type": "file",
+      "file": "大学物理B/电磁学/恒定磁场核心公式.md",
+      "x": 700,
+      "y": -50,
+      "width": 500,
+      "height": 600
+    },
+    {
+      "id": "node_dfield",
+      "type": "file",
+      "file": "大学物理B/电磁学/高斯定理中的电位移矢量D.md",
+      "x": 100,
+      "y": 600,
+      "width": 500,
+      "height": 550
+    },
+    {
+      "id": "node_hall",
+      "type": "file",
+      "file": "大学物理B/电磁学/霍尔效应与磁介质核心公式.md",
+      "x": 700,
+      "y": 600,
+      "width": 500,
+      "height": 550
+    },
+    {
+      "id": "node_waves",
+      "type": "file",
+      "file": "大学物理B/振动与波/机械波与振动方程核心公式.md",
+      "x": -600,
+      "y": 600,
+      "width": 500,
+      "height": 550
+    },
+    {
+      "id": "node_paradox",
+      "type": "file",
+      "file": "大学物理B/振动与波/振动与波的能量悖论.md",
+      "x": -1050,
+      "y": 600,
+      "width": 400,
+      "height": 550
+    },
+    {
+      "id": "node_energy_formula",
+      "type": "file",
+      "file": "大学物理B/振动与波/机械波能量核心公式.md",
+      "x": -600,
+      "y": 1200,
+      "width": 500,
+      "height": 550
+    },
+    {
+      "id": "node_optics",
+      "type": "file",
+      "file": "大学物理B/波动光学/干涉与衍射核心公式.md",
+      "x": -50,
+      "y": 1200,
+      "width": 550,
+      "height": 600
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_rigid",
+      "fromNode": "node_text_title",
+      "fromSide": "bottom",
+      "toNode": "node_rigid",
+      "toSide": "top"
+    },
+    {
+      "id": "edge_em",
+      "fromNode": "node_text_title",
+      "fromSide": "bottom",
+      "toNode": "node_em",
+      "toSide": "top"
+    },
+    {
+      "id": "edge_magnetic",
+      "fromNode": "node_text_title",
+      "fromSide": "bottom",
+      "toNode": "node_magnetic",
+      "toSide": "top"
+    },
+    {
+      "id": "edge_dfield",
+      "fromNode": "node_em",
+      "fromSide": "bottom",
+      "toNode": "node_dfield",
+      "toSide": "top"
+    },
+    {
+      "id": "edge_hall",
+      "fromNode": "node_magnetic",
+      "fromSide": "bottom",
+      "toNode": "node_hall",
+      "toSide": "top"
+    },
+    {
+      "id": "edge_sym",
+      "fromNode": "node_dfield",
+      "fromSide": "right",
+      "toNode": "node_hall",
+      "toSide": "left"
+    },
+    {
+      "id": "edge_waves",
+      "fromNode": "node_text_title",
+      "fromSide": "bottom",
+      "toNode": "node_waves",
+      "toSide": "top"
+    },
+    {
+      "id": "edge_paradox",
+      "fromNode": "node_waves",
+      "fromSide": "left",
+      "toNode": "node_paradox",
+      "toSide": "right"
+    },
+    {
+      "id": "edge_energy_formula",
+      "fromNode": "node_waves",
+      "fromSide": "bottom",
+      "toNode": "node_energy_formula",
+      "toSide": "top"
+    },
+    {
+      "id": "edge_optics",
+      "fromNode": "node_waves",
+      "fromSide": "right",
+      "toNode": "node_optics",
+      "toSide": "top"
+    }
+  ]
+}

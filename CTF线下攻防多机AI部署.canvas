@@ -1,0 +1,16 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# 线下攻防 CTF 临时 AI 部署方案\n**目标**：在断网环境下，用3台笔记本（总显存约20-30G）跑动高智商黑客/代码大模型。","x":0,"y":0,"width":500,"height":100,"color":"1"},
+		{"id":"hardware","type":"text","text":"### 第一步：盘点弹药（硬件算账）\n- 游戏本A (RTX30/40)：估算 8G 显存\n- 游戏本B (RTX30/40)：估算 8G 显存\n- 轻薄本C (RTX3060)：估算 6G 显存\n**总计可用高速显存**：约 22G。\n\n*提示：大模型运行不仅吃显存，还吃内存。显存装不下的可以借用内存（会变慢一点，但能跑）。*","x":-250,"y":150,"width":400,"height":220,"color":"2"},
+		{"id":"model","type":"text","text":"### 第二步：挑选“狙击枪”（模型选择）\n由于我们只有 ~22G 显存，跑不动 70B 的巨无霸。推荐以下两种针对网络攻防/代码极强的模型（需要下载 GGUF 格式的量化版）：\n\n1. **首选：Qwen2.5-Coder-32B-Instruct (Q4_K_M)**\n   - **理由**：目前最强开源代码模型之一，极其擅长写 Python 脚本、逆向分析、漏洞利用代码编写。\n   - **体积**：约 20GB，刚好能塞进你们三台电脑的总显存！\n2. **备选：WhiteRabbitNeo 13B / 33B**\n   - **理由**：专门用实战黑客数据微调的模型，天生懂渗透测试工具（如 Nmap, Metasploit）的命令和输出。","x":250,"y":150,"width":450,"height":300,"color":"3"},
+		{"id":"network","type":"text","text":"### 第三步：组建“局域网战壕”\n线下赛断网，你们必须自己带一个**千兆路由器**（或者用一根网线直连，或者开手机热点）。\n建议：用交换机/路由器把三台电脑用**网线**连起来，确保在同一个局域网（比如 `192.168.1.x`），并互相能 ping 通。","x":-150,"y":420,"width":400,"height":180,"color":"4"},
+		{"id":"deploy","type":"text","text":"### 第四步：一键点火（llama.cpp RPC）\n选性能最强的一台游戏本作为**指挥官（主节点）**，另外两台作为**工兵（工作节点）**。\n\n**工兵电脑（轻薄本和游戏本B）运行**：\n`llama-rpc-server -H 0.0.0.0 -p 50052`\n*(意思是：我准备好了，显卡交给你调遣)*\n\n**指挥官电脑（游戏本A）运行**：\n`llama-server -m qwen2.5-coder-32b.gguf --rpc 192.168.1.101:50052,192.168.1.102:50052 -ngl 99`\n*(意思是：把模型加载起来，不够的地方直接丢给那两个工兵的IP地址去算，-ngl 99 代表全部塞进显卡)*","x":300,"y":480,"width":500,"height":280,"color":"5"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"title","fromSide":"bottom","toNode":"hardware","toSide":"top"},
+		{"id":"e2","fromNode":"title","fromSide":"bottom","toNode":"model","toSide":"top"},
+		{"id":"e3","fromNode":"hardware","fromSide":"bottom","toNode":"network","toSide":"top"},
+		{"id":"e4","fromNode":"network","fromSide":"bottom","toNode":"deploy","toSide":"top"},
+		{"id":"e5","fromNode":"model","fromSide":"bottom","toNode":"deploy","toSide":"top"}
+	]
+}

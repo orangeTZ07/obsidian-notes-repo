@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>隐函数曲面可视化: z + e^z = xy</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #111; color: white; font-family: 'Inter', sans-serif; }
+        #plot { width: 100vw; height: 100vh; }
+        .overlay { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 20px; border-radius: 10px; pointer-events: none;}
+        h1 { margin-top: 0; font-size: 24px; color: #00d2ff; }
+        p { font-size: 16px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <div id="plot"></div>
+    <div class="overlay">
+        <h1>隐函数可视化</h1>
+        <p>方程: <b>z + e<sup>z</sup> = xy</b></p>
+        <p>这定义了一个三维空间中的曲面 (等值面 F(x,y,z)=0)</p>
+        <p>在这个曲面上任意一点的法向量为:<br><b>n = { -y, -x, 1+e<sup>z</sup> }</b></p>
+    </div>
+
+    <script>
+        const size = 30;
+        let x = [];
+        let y = [];
+        let z = [];
+        let values = [];
+
+        // Generate grid
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                for (let k = 0; k < size; k++) {
+                    // map i,j,k to x,y,z ranges
+                    let curX = -4 + (i / (size - 1)) * 8; // -4 to 4
+                    let curY = -4 + (j / (size - 1)) * 8; // -4 to 4
+                    let curZ = -2 + (k / (size - 1)) * 4; // -2 to 2
+
+                    x.push(curX);
+                    y.push(curY);
+                    z.push(curZ);
+                    
+                    // F(x,y,z) = z + e^z - xy
+                    values.push(curZ + Math.exp(curZ) - curX * curY);
+                }
+            }
+        }
+
+        var data = [{
+            type: "isosurface",
+            x: x,
+            y: y,
+            z: z,
+            value: values,
+            isomin: -0.1,
+            isomax: 0.1,
+            surface: { show: true, count: 1, fill: 1, pattern: 'odd' },
+            caps: {
+                x: {show: false},
+                y: {show: false},
+                z: {show: false}
+            },
+            colorscale: 'Viridis',
+            showscale: false
+        }];
+
+        var layout = {
+            margin: {t:0, l:0, b:0, r:0},
+            paper_bgcolor: 'black',
+            scene: {
+                xaxis: {title: 'X', gridcolor: '#444'},
+                yaxis: {title: 'Y', gridcolor: '#444'},
+                zaxis: {title: 'Z', gridcolor: '#444'},
+                camera: { eye: {x: 1.5, y: 1.5, z: 1.5} }
+            }
+        };
+
+        Plotly.newPlot('plot', data, layout);
+    </script>
+</body>
+</html>

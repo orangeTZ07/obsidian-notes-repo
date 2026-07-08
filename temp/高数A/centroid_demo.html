@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>形心直观演示</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        #canvas-container { position: relative; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); background-color: white; border-radius: 8px; overflow: hidden; margin-top: 20px;}
+        canvas { display: block; }
+        .description { max-width: 600px; margin: 0 auto; font-size: 1.1em; color: #333; line-height: 1.6; text-align: left; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .formula { font-size: 1.2em; font-weight: bold; color: #d9534f; background: #fdf2f2; padding: 10px; border-radius: 4px; text-align: center; margin: 15px 0;}
+    </style>
+</head>
+<body>
+
+    <div class="description">
+        <h2 style="margin-top:0;">🌟 形心的直观理解：加权平均</h2>
+        <p>假设这个蓝色的不规则图形是一个<b>厚度均匀、质量均匀的木板</b>（区域 $D$）。</p>
+        <p>如果我们要用一根手指把它稳稳地托起来，手指必须放在哪个点上？这个完美的平衡点，就是<b>形心 $(\bar{x}, \bar{y})$</b>！</p>
+        <div class="formula">
+            x̄ = (所有小块距y轴距离 × 小块面积)之和 / 总面积<br>
+            也就是：x̄ = ∬ x dxdy / ∬ 1 dxdy
+        </div>
+        <p>💡 <b>鼠标在图形上移动看看：</b> 图形被切成了无数个面积为 $dxdy$ 的微小正方形。对于 x 方向的形心 $\bar{x}$，我们实际上是在算每一个微小方块的“杠杆效应” (距离 x 乘以 面积 dxdy)，然后除以总面积。</p>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="myCanvas" width="600" height="400"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 坐标系原点设在左下角偏右一点
+        const originX = 50;
+        const originY = 350;
+
+        // 定义一个不规则多边形作为区域 D (相对于坐标系的坐标)
+        const regionPoints = [
+            {x: 50, y: 50},
+            {x: 200, y: 30},
+            {x: 350, y: 150},
+            {x: 400, y: 250},
+            {x: 250, y: 280},
+            {x: 80, y: 200}
+        ];
+
+        let mousePos = null;
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mousePos = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            draw();
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            mousePos = null;
+            draw();
+        });
+
+        // 判断点是否在多边形内
+        function isPointInPolygon(point, vs) {
+            let x = point.x, y = point.y;
+            let inside = false;
+            for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+                let xi = originX + vs[i].x, yi = originY - vs[i].y;
+                let xj = originX + vs[j].x, yj = originY - vs[j].y;
+                let intersect = ((yi > y) != (yj > y))
+                    && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+
+        // 计算形心
+        let cx = 0, cy = 0, area = 0;
+        for (let i = 0, j = regionPoints.length - 1; i < regionPoints.length; j = i++) {
+            let xi = regionPoints[i].x, yi = regionPoints[i].y;
+            let xj = regionPoints[j].x, yj = regionPoints[j].y;
+            let a = xi * yj - xj * yi;
+            area += a;
+            cx += (xi + xj) * a;
+            cy += (yi + yj) * a;
+        }
+        area = area / 2;
+        cx = cx / (6 * area);
+        cy = cy / (6 * area);
+        
+        // 转换为屏幕坐标
+        const screenCx = originX + cx;
+        const screenCy = originY - cy;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 画网格背景
+            ctx.strokeStyle = '#eee';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=20) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=20) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); ctx.stroke(); }
+
+            // 画坐标轴
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(originX, 0); ctx.lineTo(originX, canvas.height); // y轴
+            ctx.moveTo(0, originY); ctx.lineTo(canvas.width, originY); // x轴
+            ctx.stroke();
+            
+            // 画箭头和标签
+            ctx.fillStyle = '#333';
+            ctx.font = '16px Arial';
+            ctx.fillText('x', canvas.width - 20, originY - 10);
+            ctx.fillText('y', originX + 10, 20);
+            ctx.fillText('O', originX - 15, originY + 15);
+
+            // 画区域 D
+            ctx.beginPath();
+            ctx.moveTo(originX + regionPoints[0].x, originY - regionPoints[0].y);
+            for(let i=1; i<regionPoints.length; i++) {
+                ctx.lineTo(originX + regionPoints[i].x, originY - regionPoints[i].y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(52, 152, 219, 0.4)'; // 半透明蓝色
+            ctx.fill();
+            ctx.strokeStyle = '#2980b9';
+            ctx.stroke();
+            
+            // 标出区域标签 D
+            ctx.fillStyle = '#2980b9';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('D', originX + cx + 50, originY - cy + 50);
+
+            // 交互：如果鼠标在区域内，高亮一个 dxdy 的小方块
+            if (mousePos && isPointInPolygon(mousePos, regionPoints)) {
+                const sqSize = 15;
+                const sx = mousePos.x - sqSize/2;
+                const sy = mousePos.y - sqSize/2;
+                
+                // 画虚线连到坐标轴
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 1.5;
+                
+                // 到 y 轴的距离 (x 坐标)
+                ctx.beginPath();
+                ctx.moveTo(sx + sqSize/2, sy + sqSize/2);
+                ctx.lineTo(originX, sy + sqSize/2);
+                ctx.stroke();
+
+                // 到 x 轴的距离 (y 坐标)
+                ctx.strokeStyle = '#27ae60';
+                ctx.beginPath();
+                ctx.moveTo(sx + sqSize/2, sy + sqSize/2);
+                ctx.lineTo(sx + sqSize/2, originY);
+                ctx.stroke();
+                ctx.setLineDash([]); // 恢复实线
+
+                // 画小方块 dxdy
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillRect(sx, sy, sqSize, sqSize);
+                ctx.strokeRect(sx, sy, sqSize, sqSize);
+
+                // 标注文本
+                ctx.fillStyle = '#e74c3c';
+                ctx.font = '14px Arial';
+                ctx.fillText('x 距离', originX + (sx - originX)/2, sy + sqSize/2 - 5);
+                
+                ctx.fillStyle = '#27ae60';
+                ctx.fillText('y 距离', sx + sqSize/2 + 5, originY - (originY - sy)/2);
+                
+                ctx.fillStyle = '#c0392b';
+                ctx.fillText('微元 dxdy', sx + sqSize + 5, sy - 5);
+            }
+
+            // 重点画出形心点 (红点)
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(screenCx, screenCy, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 标注形心坐标
+            ctx.fillStyle = '#c0392b';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText(`形心 (x̄, ȳ)`, screenCx + 10, screenCy - 10);
+            
+            // 画出形心到坐标轴的连线
+            ctx.setLineDash([3, 3]);
+            ctx.strokeStyle = '#c0392b';
+            ctx.beginPath();
+            ctx.moveTo(screenCx, screenCy);
+            ctx.lineTo(screenCx, originY);
+            ctx.moveTo(screenCx, screenCy);
+            ctx.lineTo(originX, screenCy);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        draw();
+    </script>
+</body>
+</html>
